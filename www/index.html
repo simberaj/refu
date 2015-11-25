@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <link rel="stylesheet" type="text/css" href="css/leaflet.css">
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css">
+        <title>Refugee Map</title>
+    </head>
+    <body>
+        <div data-role="page" id="page-main">
+            <div data-role="header">
+              <div class="status-icon ui-btn-icon-right"></div>
+            </div>
+            <div data-role="content">
+              <a href="#page-map" data-role="button">Map</a>
+            </div>        
+        </div> <!-- end page-main -->
+        <div data-role="page" id="page-map">
+            <div data-role="header">
+              <!-- <a href="#">Lang</a> -->
+              <button id="add-mode-on" onclick="addModeOn();" style="float: left;">Add</button>
+              <button id="add-mode-off" onclick="addModeOff();" style="float: left;">Stop</button>
+              <div class="status-icon ui-btn-icon-right"></div>
+            </div>
+            <div data-role="content" id="content-map">
+              <div id="map"></div>
+            </div>
+            <!-- <div data-role="footer" data-position="fixed"></div> -->
+            <div data-role="panel" id="panel-settings" data-position="left" data-theme="b">
+              <div class="panel-content"></div>
+            </div>
+        </div> <!-- end page-map -->
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/leaflet.js"></script>
+        <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+        <script type="text/javascript" src="js/pouchdb-5.1.0.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+    </body>
+</html>
