@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf8">
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
@@ -10,29 +11,92 @@
         <title>Refugee Map</title>
     </head>
     <body>
-        <div data-role="page" id="page-main">
+        <div data-role="page" id="page-map">
+            <div data-role="header" style="text-align:left;" data-position="fullscreen">
+              <div data-role="controlgroup" data-type="horizontal">
+                <a href="#page-search" data-role="button" class="ui-btn ui-icon-search ui-btn-icon-notext"></a>
+                <a href="#page-add" data-role="button" class="ui-btn ui-icon-plus ui-btn-icon-notext"></a>
+              </div>
+              <!-- <a href="#page-add" data-role="button" class="ui-btn ui-icon-plus ui-btn-icon-notext"></a> -->
+<!--               <button id="add-mode-on" onclick="addModeOn();" style="float: left;">Add</button>
+              <button id="add-mode-off" onclick="addModeOff();" style="float: left;">Stop</button>
+ -->          <div class="status-icon ui-btn-icon-right"></div>
+            </div>
+            <div data-role="main" id="content-map">
+              <div id="map" style="height:800px"></div>
+            </div>
+            <!-- <div data-role="footer" data-position="fixed"></div> -->
+            <!-- <div data-role="panel" id="panel-settings" data-position="left" data-theme="b">
+              <div class="panel-content"></div>
+            </div> -->
+        </div> <!-- end page-map -->
+
+        <div data-role="page" id="page-search">
+          <div data-role="header">
+            <a href="#page-map" data-role="button" class="ui-btn ui-icon-back ui-btn-icon-left">Map</a>
+            <h1>Search places</h1>
+            <div class="status-icon ui-btn-icon-right"></div>
+          </div>
+          <div data-role="content">
+            <form class="ui-filterable">
+              <input data-type="search" id="searchbox" placeholder="Enter text to search..." />
+            </form>
+            <ul data-role="listview">
+              <li data-role="list-divider" role="heading">Categories</li>
+                <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Wi-Fi</a></li>
+                <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Accomodation</a></li>
+              <li data-role="list-divider" role="heading">Places</li>
+              <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">TU Wien</a></li>
+              <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Gußhausstraße</a></li>
+            </ul>
+          </div>   
+        </div> <!-- end page-search -->
+                
+        <div data-role="page" data-dialog="true" id="page-details">
+          <div data-role="header">
+            <h1>Place name</h1>
+          </div>
+          <div data-role="content">
+            <p class="desc-category">Place category</p>
+            <form method="post">
+              <fieldset class="ui-field-contain">
+                <label for="desc-lang">Description language...</label>
+                <select name="desc-lang" id="desc-lang">
+                  <option value="en">English</option>
+                  <option value="ar">Arabic</option>
+                  <option value="de">German</option>
+                </select>
+              </fieldset>
+            </form>
+            <p class="desc-description">Sorry, no description in English for this place!</p>
+            <a data-role="button" onclick="" class="ui-btn ui-icon-plus ui-btn-icon-left">Add description in English...</a><br />
+            <a data-role="button" onclick="" class="ui-btn ui-icon-check ui-btn-icon-left">Been there</a>
+            <a data-role="button" onclick="" class="ui-btn ui-icon-delete ui-btn-icon-left">Not found</a><br />
+            <a data-role="button" onclick="" class="ui-btn ui-icon-navigation ui-btn-icon-left">Route to place</a>
+          </div>        
+        </div> <!-- end page-details -->
+        
+        <div data-role="page" data-dialog="true" id="page-add">
+          <form method="post">
             <div data-role="header">
+              <input type="text" name="add-placename" id="add-placename" placeholder="Add place name" />
+              <a href="#page-map" data-role="button" class="ui-btn ui-icon-back ui-btn-icon-left">Map</a>
               <div class="status-icon ui-btn-icon-right"></div>
             </div>
             <div data-role="content">
-              <a href="#page-map" data-role="button">Map</a>
+              <fieldset class="ui-field-contain">
+                <label for="add-category">Category...</label>
+                <select name="add-category" id="add-category">
+                  <option value="wifi">Wi-Fi access point</option>
+                  <option value="accomodation">Accomodation</option>
+                </select>
+                <textarea name="add-desc" id="add-desc" placeholder="Add description..."></textarea>
+                <input type="email" name="email" id="email" placeholder="My e-mail" />
+              </fieldset>
             </div>        
-        </div> <!-- end page-main -->
-        <div data-role="page" id="page-map">
-            <div data-role="header">
-              <!-- <a href="#">Lang</a> -->
-              <button id="add-mode-on" onclick="addModeOn();" style="float: left;">Add</button>
-              <button id="add-mode-off" onclick="addModeOff();" style="float: left;">Stop</button>
-              <div class="status-icon ui-btn-icon-right"></div>
-            </div>
-            <div data-role="content" id="content-map">
-              <div id="map"></div>
-            </div>
-            <!-- <div data-role="footer" data-position="fixed"></div> -->
-            <div data-role="panel" id="panel-settings" data-position="left" data-theme="b">
-              <div class="panel-content"></div>
-            </div>
-        </div> <!-- end page-map -->
+          </form>
+        </div> <!-- end page-add -->
+
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/leaflet.js"></script>
         <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
