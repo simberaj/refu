@@ -1,0 +1,20 @@
+TODO: Sliding button interface on the map page
+ - did not find the proper way to do it...
+TODO: Map page correct display
+TODO: POI document structure
+TODO: Popup display
+TODO: Details display page
+TODO: Description adding
+TODO: Verify/Not here on display page
+TODO: Adding a new point
+TODO: Searching
+TODO: Locate Me
+TODO: Layer display
+TODO: OSM querying (Overpass API)
+TODO: Initial database fill
+TODO: Multilingual support
+TODO: Adding basic languages
+
+NTH:  Local tile storage
+NTH:  Images in descriptions
+NTH:  Routing
