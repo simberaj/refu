@@ -21,7 +21,7 @@ TODO: Description adding (Jan)
 TODO: Adding basic languages (Jan)
 TODO: Localization support (Jan)
 TODO: Localizing the user interface (Arda)
-
+---------------------------------------------------
 NTH:  Local tile storage
 NTH:  Images in descriptions
 NTH:  Routing
