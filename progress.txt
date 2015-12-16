@@ -1,7 +1,4 @@
 TODO: Basic page structure (Jan)
-TODO: Sliding button interface on the map page (Jan)
- - did not find the proper way to do it...
-TODO: Map page correct display (Jan)
 TODO: Example POI (Arda)
 TODO: Markers and display (Arda)
 TODO: Popup display (Jan)
@@ -29,3 +26,5 @@ NTH:  Labels
 NTH:  Spatial indexing
 
 DONE: POI document structure
+DONE: Map page correct display
+DONE: Sliding button interface on the map page

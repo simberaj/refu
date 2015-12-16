@@ -5,33 +5,33 @@
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-        <link rel="stylesheet" type="text/css" href="css/index.css">
         <link rel="stylesheet" type="text/css" href="css/leaflet.css">
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
         <title>Refugee Map</title>
     </head>
     <body>
         <div data-role="page" id="page-map">
-            <div data-role="header" style="text-align:left;" data-position="fullscreen">
-              <!-- <div data-role="controlgroup" data-type="horizontal">
-                <a href="#page-search" data-role="button" class="ui-btn ui-icon-search ui-btn-icon-notext"></a>
-                <a href="#page-add" data-role="button" class="ui-btn ui-icon-plus ui-btn-icon-notext"></a>
-              </div>
-               --><!-- <a href="#page-add" data-role="button" class="ui-btn ui-icon-plus ui-btn-icon-notext"></a> -->
+          <!-- <div data-role="header" style="text-align:left;" data-position="fullscreen">
+            <div data-role="controlgroup" data-type="horizontal">
+              <a href="#page-search" data-role="button" class="ui-btn ui-icon-search ui-btn-icon-notext"></a>
+              <a href="#page-add" data-role="button" class="ui-btn ui-icon-plus ui-btn-icon-notext"></a>
+            </div> -->
+            <!-- <a href="#page-add" data-role="button" class="ui-btn ui-icon-plus ui-btn-icon-notext"></a> -->
 <!--               <button id="add-mode-on" onclick="addModeOn();" style="float: left;">Add</button>
-              <button id="add-mode-off" onclick="addModeOff();" style="float: left;">Stop</button>
- -->          <div class="status-icon ui-btn-icon-right"></div>
-            </div>
-            <div data-role="main" id="content-map">
-              <div id="map" style="height:800px"></div>
-            </div>
+            <button id="add-mode-off" onclick="addModeOff();" style="float: left;">Stop</button>
+-->         <!-- <div class="status-icon ui-btn-icon-right"></div>
+          </div> -->
+          <div data-role="main" id="content-map">
+            <div id="map"></div>
+          </div>
             <!-- <div data-role="footer" data-position="fixed"></div> -->
             <!-- <div data-role="panel" id="panel-settings" data-position="left" data-theme="b">
               <div class="panel-content"></div>
             </div> -->
         </div> <!-- end page-map -->
 
-        <div data-role="page" id="page-search">
+<!--         <div data-role="page" id="page-search">
           <div data-role="header">
             <a href="#page-map" data-role="button" class="ui-btn ui-icon-back ui-btn-icon-left">Map</a>
             <h1>Search places</h1>
@@ -50,9 +50,9 @@
               <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Gußhausstraße</a></li>
             </ul>
           </div>   
-        </div> <!-- end page-search -->
+        </div> --> <!-- end page-search -->
                 
-        <div data-role="page" data-dialog="true" id="page-details">
+<!--         <div data-role="page" data-dialog="true" id="page-details">
           <div data-role="header">
             <h1>Place name</h1>
           </div>
@@ -74,9 +74,9 @@
             <a data-role="button" onclick="" class="ui-btn ui-icon-delete ui-btn-icon-left">Not found</a><br />
             <a data-role="button" onclick="" class="ui-btn ui-icon-navigation ui-btn-icon-left">Route to place</a>
           </div>        
-        </div> <!-- end page-details -->
+        </div> --> <!-- end page-details -->
         
-        <div data-role="page" data-dialog="true" id="page-add">
+<!--         <div data-role="page" data-dialog="true" id="page-add">
           <form method="post">
             <div data-role="header">
               <input type="text" name="add-placename" id="add-placename" placeholder="Add place name" />
@@ -95,7 +95,7 @@
               </fieldset>
             </div>        
           </form>
-        </div> <!-- end page-add -->
+        </div> --> <!-- end page-add -->
 
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/leaflet.js"></script>

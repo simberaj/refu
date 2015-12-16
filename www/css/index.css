@@ -6,39 +6,53 @@ body {
     -webkit-touch-callout: none;
     -webkit-text-size-adjust: none;
     -webkit-user-select: none;
+    padding: 0;
+    margin: 0;
 }
 
-/* Portrait layout (default) */
-.app {
-    background:url(../img/logo.png) no-repeat center top; /* 170px x 200px */
-    position:absolute;             /* position in the center of the screen */
-    left:50%;
-    top:50%;
-    height:50px;                   /* text area height */
-    width:225px;                   /* text area width */
-    text-align:center;
-    padding:180px 0px 0px 0px; 
-    margin:-115px 0px 0px -112px;
-}
 
-/* Landscape layout (with min-width) */
-@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
-    .app {
-        background-position:left center;
-        padding:75px 0px 75px 170px;
-        margin:-90px 0px 0px -198px;
-    }
-}
-
-#content-map.ui-content {
+#content-map {
   position:absolute;
-  top:40px;
+  top:0;
   right:0;
-  bottom:40px;
+  bottom:0;
   left:0;
   padding: 0 !important;
 }
 
-#map {
-  height: 100%;
+html, body, #map {
+    height: 100%;
+    width: 100%;
+}
+
+.command-button {
+  background-color: #fff;
+}
+
+.command-expand {
+  background-image: url("images/icons-png/carat-d-black.png");
+}
+
+.command-collapse {
+  background-image: url("images/icons-png/carat-u-black.png");
+}
+
+.command-locate {
+  background-image: url("images/icons-png/location-black.png");
+}
+
+.command-layer {
+  background-image: url("images/icons-png/bars-black.png");
+}
+
+.command-search {
+  background-image: url("images/icons-png/search-black.png");
+}
+
+.command-add {
+  background-image: url("images/icons-png/plus-black.png");
+}
+
+.command-options {
+  background-image: url("images/icons-png/gear-black.png");
 }
