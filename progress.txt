@@ -1,12 +1,9 @@
-TODO: Basic page structure (Jan)
 TODO: Example POI (Arda)
 TODO: Markers and display (Arda)
-TODO: Popup display (Jan)
 TODO: Details display page (Arda)
 TODO: Verify/Not here on display page (Jan)
 TODO: Adding a new point (Arda)
 TODO: Searching (Jan)
-TODO: Locate Me (Jan)
 TODO: Layer display/filtering (Jan)
 TODO: OSM querying (Overpass API) (Jan)
 TODO: OSM points local storage (Jan)
@@ -28,3 +25,6 @@ NTH:  Spatial indexing
 DONE: POI document structure
 DONE: Map page correct display
 DONE: Sliding button interface on the map page
+DONE: Locate Me
+DONE: Popup display
+DONE: Basic page structure

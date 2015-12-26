@@ -20,39 +20,28 @@ body {
   padding: 0 !important;
 }
 
-html, body, #map {
-    height: 100%;
-    width: 100%;
-}
+html, body, #map {height: 100%; width: 100%;}
 
-.command-button {
-  background-color: #fff;
-}
+div.locselecting {cursor: crosshair;}
 
-.command-expand {
-  background-image: url("images/icons-png/carat-d-black.png");
-}
+/* .leaflet-bar a.command-button {background-color: #fff;} */
+.leaflet-bar a, .leaflet-bar a:visited {color: #000; font-weight: bold;}
+.leaflet-bar a.command-expand {background-image: url("images/icons-png/carat-d-black.png");}
+.leaflet-bar a.command-collapse {background-image: url("images/icons-png/carat-u-black.png");}
+.leaflet-bar a.command-locate {background-image: url("images/icons-png/home-black.png");}
+.leaflet-bar a.command-layer {background-image: url("images/icons-png/bars-black.png");}
+.leaflet-bar a.command-search {background-image: url("images/icons-png/search-black.png");}
+.leaflet-bar a.command-add {background-image: url("images/icons-png/plus-black.png");}
+.leaflet-bar a.command-button-down {background-color: #aaa;}
+.leaflet-bar a.command-options {background-image: url("images/icons-png/gear-black.png");}
 
-.command-collapse {
-  background-image: url("images/icons-png/carat-u-black.png");
-}
-
-.command-locate {
-  background-image: url("images/icons-png/location-black.png");
-}
-
-.command-layer {
-  background-image: url("images/icons-png/bars-black.png");
-}
-
-.command-search {
-  background-image: url("images/icons-png/search-black.png");
-}
-
-.command-add {
-  background-image: url("images/icons-png/plus-black.png");
-}
-
-.command-options {
-  background-image: url("images/icons-png/gear-black.png");
-}
+p.popupname {font-weight: bold; margin:0;}
+a.morelink, a.morelink:visited {text-decoration: none; color: #ccc; font-size:20px; line-height:15px;}
+a.morelink:hover {color: #888;}
+/* div.inpopup {width: 26px; height: 26px; float: left; text-align: center; text-decoration: none;}
+div.popup-details {background-image: url("images/icons-png/action-black.png") no-repeat;}
+div.popup-close {background-image: url("images/icons-png/delete-black.png") no-repeat;}
+div.popup-close a {line-height:26px;}
+div.inpopup:hover {background-color: #f4f4f4;}
+ *//* a.inpopup {margin-top:5px; padding: 0 20px;} */
+div.leaflet-popup-content {text-align: center; margin: 5px 22px;}

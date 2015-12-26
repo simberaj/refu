@@ -12,30 +12,15 @@
     </head>
     <body>
         <div data-role="page" id="page-map">
-          <!-- <div data-role="header" style="text-align:left;" data-position="fullscreen">
-            <div data-role="controlgroup" data-type="horizontal">
-              <a href="#page-search" data-role="button" class="ui-btn ui-icon-search ui-btn-icon-notext"></a>
-              <a href="#page-add" data-role="button" class="ui-btn ui-icon-plus ui-btn-icon-notext"></a>
-            </div> -->
-            <!-- <a href="#page-add" data-role="button" class="ui-btn ui-icon-plus ui-btn-icon-notext"></a> -->
-<!--               <button id="add-mode-on" onclick="addModeOn();" style="float: left;">Add</button>
-            <button id="add-mode-off" onclick="addModeOff();" style="float: left;">Stop</button>
--->         <!-- <div class="status-icon ui-btn-icon-right"></div>
-          </div> -->
+           <!-- <div class="status-icon ui-btn-icon-right"></div> -->
           <div data-role="main" id="content-map">
             <div id="map"></div>
           </div>
-            <!-- <div data-role="footer" data-position="fixed"></div> -->
-            <!-- <div data-role="panel" id="panel-settings" data-position="left" data-theme="b">
-              <div class="panel-content"></div>
-            </div> -->
-        </div> <!-- end page-map -->
+        </div>
 
-<!--         <div data-role="page" id="page-search">
+        <div data-role="page" data-dialog="true" id="page-search">
           <div data-role="header">
-            <a href="#page-map" data-role="button" class="ui-btn ui-icon-back ui-btn-icon-left">Map</a>
             <h1>Search places</h1>
-            <div class="status-icon ui-btn-icon-right"></div>
           </div>
           <div data-role="content">
             <form class="ui-filterable">
@@ -50,11 +35,13 @@
               <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Gußhausstraße</a></li>
             </ul>
           </div>   
-        </div> --> <!-- end page-search -->
-                
-<!--         <div data-role="page" data-dialog="true" id="page-details">
+        </div>
+              
+        <!-- The details page. The link from the popup should call a function to fill in this page and then refer to it. -->
+        <div data-role="page" id="page-details">
           <div data-role="header">
-            <h1>Place name</h1>
+            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">Map</a>
+            <h1 id="details-name">Place name</h1>
           </div>
           <div data-role="content">
             <p class="desc-category">Place category</p>
@@ -70,18 +57,17 @@
             </form>
             <p class="desc-description">Sorry, no description in English for this place!</p>
             <a data-role="button" onclick="" class="ui-btn ui-icon-plus ui-btn-icon-left">Add description in English...</a><br />
-            <a data-role="button" onclick="" class="ui-btn ui-icon-check ui-btn-icon-left">Been there</a>
-            <a data-role="button" onclick="" class="ui-btn ui-icon-delete ui-btn-icon-left">Not found</a><br />
-            <a data-role="button" onclick="" class="ui-btn ui-icon-navigation ui-btn-icon-left">Route to place</a>
+            <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-check ui-btn-icon-left">Been there</a>
+            <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-delete ui-btn-icon-left">Not found</a><br />
+            <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-navigation ui-btn-icon-left">Route to place</a>
           </div>        
-        </div> --> <!-- end page-details -->
+        </div>
         
-<!--         <div data-role="page" data-dialog="true" id="page-add">
+        <!-- The add new place page. The adding onclick listener should redirect here
+        <div data-role="page" data-dialog="true" id="page-add">
           <form method="post">
             <div data-role="header">
               <input type="text" name="add-placename" id="add-placename" placeholder="Add place name" />
-              <a href="#page-map" data-role="button" class="ui-btn ui-icon-back ui-btn-icon-left">Map</a>
-              <div class="status-icon ui-btn-icon-right"></div>
             </div>
             <div data-role="content">
               <fieldset class="ui-field-contain">
@@ -95,8 +81,44 @@
               </fieldset>
             </div>        
           </form>
-        </div> --> <!-- end page-add -->
+        </div> <!-- end page-add -->
 
+        <div data-role="page" id="page-options">
+          <div data-role="header">
+            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">Map</a>
+            <h1>Options</h1>
+          </div>
+          <div data-role="content">
+            <form method="post">
+              <fieldset class="ui-field-contain">
+                <input name="user-email" id="user-email" type="email" value="Enter e-mail" />
+                <p>Your e-mail will only be used internally in the database to identify authorship of the places you add to the map. It will neither be displayed to other users nor used to sent unwanted e-mails.</p>
+                <select name="user-lang" id="user-lang">
+                  <option value="none" disabled="disabled" selected="selected">Language</option>
+                  <option value="en">English</option>
+                  <option value="ar">Arabic</option>
+                  <option value="de">German</option>
+                </select>
+                <button name="option-submit">Save options</button>
+              </fieldset>
+              <a href="#page-about" data-role="button">About</a>
+              <fieldset class="ui-field-contain">
+                <textarea name="contact-form" id="contact-form" maxlength="10000">Send us a message...</textarea>
+              </fieldset>
+            </form>
+          </div>        
+        </div>
+
+        <div data-role="page" id="page-about">
+          <div data-role="header">
+            <a href="#page-options" data-role="button" data-inline="true" data-icon="back">Options</a>
+            <h1>About</h1>
+          </div>
+          <div data-role="content">
+            <p>Something about the origin of the application, its developers and so on.</p>
+          </div>        
+        </div>
+        
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/leaflet.js"></script>
         <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
