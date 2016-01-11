@@ -20,17 +20,18 @@
 
         <div data-role="page" data-dialog="true" id="page-search">
           <div data-role="header">
-            <h1>Search places</h1>
+            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">Map</a>
+            <h1 id="search-header">Search</h1>
           </div>
           <div data-role="content">
             <form class="ui-filterable">
               <input data-type="search" id="searchbox" placeholder="Enter text to search..." />
             </form>
             <ul data-role="listview">
-              <li data-role="list-divider" role="heading">Categories</li>
+              <li data-role="list-divider" role="heading" id="category-header">Categories</li>
                 <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Wi-Fi</a></li>
                 <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Accomodation</a></li>
-              <li data-role="list-divider" role="heading">Places</li>
+              <li data-role="list-divider" role="heading" id="placelist-header">Places</li>
               <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">TU Wien</a></li>
               <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Gußhausstraße</a></li>
             </ul>
@@ -47,7 +48,7 @@
             <p class="desc-category">Place category</p>
             <form method="post">
               <fieldset class="ui-field-contain">
-                <label for="desc-lang">Description language...</label>
+                <label for="desc-lang" id="desc-label">Description language...</label>
                 <select name="desc-lang" id="desc-lang">
                   <option value="en">English</option>
                   <option value="ar">Arabic</option>
@@ -56,10 +57,12 @@
               </fieldset>
             </form>
             <p class="desc-description">Sorry, no description in English for this place!</p>
-            <a data-role="button" onclick="" class="ui-btn ui-icon-plus ui-btn-icon-left">Add description in English...</a><br />
-            <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-check ui-btn-icon-left">Been there</a>
-            <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-delete ui-btn-icon-left">Not found</a><br />
-            <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-navigation ui-btn-icon-left">Route to place</a>
+            <a data-role="button" onclick="" class="ui-btn ui-icon-plus ui-btn-icon-left"id="desc-add">Add description in English...</a>
+            <div class="ui-grid-a ui-responsive">
+              <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-check ui-btn-icon-left ui-block-a" id="place-found">Been there</a>
+              <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-delete ui-btn-icon-left ui-block-b" id="place-notfound">Not found</a>
+            </div>
+            <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-navigation ui-btn-icon-left" id="route-button">Route to place</a>
           </div>        
         </div>
         
@@ -86,22 +89,20 @@
         <div data-role="page" id="page-options">
           <div data-role="header">
             <a href="#page-map" data-role="button" data-inline="true" data-icon="back">Map</a>
-            <h1>Options</h1>
+            <h1 id="options-header">Options</h1>
           </div>
           <div data-role="content">
             <form method="post">
               <fieldset class="ui-field-contain">
-                <input name="user-email" id="user-email" type="email" value="Enter e-mail" />
-                <p>Your e-mail will only be used internally in the database to identify authorship of the places you add to the map. It will neither be displayed to other users nor used to sent unwanted e-mails.</p>
+                <label for="user-email" id="user-email-label">E-mail</label>
+                <input name="user-email" id="user-email" type="email" value="" />
+                <p id="privacy-notice" class="smaller"></p>
+                <label for="user-lang" id="user-lang-label">Language</label>
                 <select name="user-lang" id="user-lang">
-                  <option value="none" disabled="disabled" selected="selected">Language</option>
-                  <option value="en">English</option>
-                  <option value="ar">Arabic</option>
-                  <option value="de">German</option>
                 </select>
-                <button name="option-submit">Save options</button>
+                <button name="option-submit" id="option-submit" onclick="saveOptions();">Save options</button>
               </fieldset>
-              <a href="#page-about" data-role="button">About</a>
+              <a href="#page-about" data-role="button" id="link-about">About</a>
               <fieldset class="ui-field-contain">
                 <textarea name="contact-form" id="contact-form" maxlength="10000">Send us a message...</textarea>
               </fieldset>
@@ -111,8 +112,8 @@
 
         <div data-role="page" id="page-about">
           <div data-role="header">
-            <a href="#page-options" data-role="button" data-inline="true" data-icon="back">Options</a>
-            <h1>About</h1>
+            <a href="#page-options" data-role="button" data-inline="true" data-icon="back"></a>
+            <h1 id="about-header">About</h1>
           </div>
           <div data-role="content">
             <p>Something about the origin of the application, its developers and so on.</p>
@@ -124,6 +125,7 @@
         <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
         <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
         <script type="text/javascript" src="js/pouchdb-5.1.0.min.js"></script>
+        <script type="text/javascript" src="js/translation.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
     </body>
 </html>

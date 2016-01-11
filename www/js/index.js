@@ -4,8 +4,80 @@ var map;
 var poiLayer = L.layerGroup();
 var remotePOIDB;
 var localPOIDB;
+var REMOTE_DB_ADDR = 'http://gi88.geoinfo.tuwien.ac.at:5984/refu';
+var addMode = false;
 
-addMode = false;
+var language;
+language = "en";
+// alert('index loaded');
+
+var noDescReport;
+var storeErrorText;
+
+function gettext(key) {
+  if (key in translation[language]) {
+    return translation[language][key];
+  } else {
+    console.log(key);
+    return translation['en'][key];
+  }
+}
+
+var translateMap = {
+  "inner" : {
+    "langopt" : "language",
+    "projlink" : "projectName",
+    "search-header" : "search",
+    // "searchbox" : "searchPrompt",
+    "category-header" : "categories",
+    "placelist-header" : "places",
+    "desc-label" : "descLangPrompt",
+    "desc-add" : "descAddPrompt",
+    "place-found" : "placeFound",
+    "place-notfound" : "placeNotFound",
+    "route-button" : "findRoute",
+    "options-header" : "options",
+    "privacy-notice" : "privacyNotice",
+    "option-submit" : "save",
+    "link-about" : "about",
+    "about-header" : "about",
+    "contact-form" : "sendMessagePrompt",
+    "user-email-label" : "email",
+    "user-lang-label" : "language"
+  }
+} 
+
+function saveOptions() {
+  language = document.getElementById('user-lang').value;
+  console.log('<change-language: ' + language + '>');
+  translate();
+  window.location = '#page-map';
+}
+
+function translate() {
+  console.log('<translate: ' + language + '>');
+  var innerTrans = translateMap["inner"];
+  var elem;
+  for (key in innerTrans) {
+    // console.log(key);
+    $('#' + key).text(gettext(innerTrans[key]));
+    // elem = document.getElementById(key);
+    // if (elem)
+      // elem.innerHTML = gettext(innerTrans[key]);
+  }
+  $('#searchbox').attr('placeholder', gettext('searchPrompt')); // TODO
+  // TODO: translate category names
+  // TODO: format with current language
+  // TODO: add images to these (categories, places in search page)...
+  // TODO: image to use for return-to-map
+  // reports within the script
+  noDescReport = gettext('noDescriptionReport');
+  storeErrorText = gettext('storeError');
+  commands.translate();
+  if (language != "en")
+    alert('translating ended');
+  console.log('</translate: ' + language + '>');
+}
 
 function createButton(cls, container, options) {
   but = L.DomUtil.create('a', cls, container);
@@ -57,6 +129,15 @@ L.Control.CommandPanel = L.Control.extend({
     // L.DomEvent.removeListener(this._input, 'keyup', this.keyup, this);
     // L.DomEvent.removeListener(form, 'submit', this.submit, this);
   },
+  translate: function () {
+    this.expandButton.title = gettext('expandControls');
+    this.collapseButton.title = gettext('collapseControls');
+    this.locateButton.title = gettext('locateMe');
+    this.layerButton.title = gettext('categories');
+    this.searchButton.title = gettext('search');
+    this.addButton.title = gettext('addPlace');
+    this.optionsButton.title = gettext('options');
+  },
   expand: function (evt) {
     $('.container-collapsed').hide();
     $('.container-expanded').show();
@@ -74,14 +155,13 @@ L.control.commandpanel = function(id, options) {
 
 function deviceIsReady() {
   console.log('<deviceIsReady>');
-  // $('#page-map').one('pageshow', initMap);
   $('#add-mode-off').hide();
-  // $.one('pageshow', initMap);
-  // db setup
-  remotePOIDB = new PouchDB('http://gi88.geoinfo.tuwien.ac.at:5984/refu');
+  remotePOIDB = new PouchDB(REMOTE_DB_ADDR);
   localPOIDB = new PouchDB('mappoint');
   initSync();
   initMap();
+  initOptions();
+  translate();
   console.log('</deviceIsReady>');
 }
 
@@ -91,10 +171,11 @@ function initMap() {
   // tiles
   L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     maxZoom: 17,
-    attribution: '&copy; <a href="http://osm.org">OSM contributors</a> | <a href="#page-about">Project Refu</a>'
+    attribution: '&copy; <a href="http://osm.org">OSM contributors</a> | <a href="#page-about" id="projlink">Project Refu</a>'
   }).addTo(map);
   L.control.scale({imperial : false}).addTo(map);
-  L.control.commandpanel().addTo(map);
+  commands = L.control.commandpanel();
+  commands.addTo(map);
   // map.addControl(new controlPanel());
   // locate the device
   gotoLocation();
@@ -102,6 +183,17 @@ function initMap() {
   poiLayer.addTo(map);
   drawPOIs();
   console.log('</initMap>');
+}
+
+function initOptions() {
+  langSelect = document.getElementById('user-lang');
+  for (lang in translation) {
+    var langopt = document.createElement("OPTION");
+    langopt.value = lang;
+    langopt.innerHTML = translation[lang][lang];
+    langSelect.add(langopt);
+  }
+  // object.onchange = languageChanged;
 }
 
 function gotoLocation() {
@@ -214,7 +306,7 @@ function refresh(evt) {
 
 function errorStoring(err) {
   console.log(err);
-  alert("Error storing the point.");
+  alert(storeErrorText);
 }
 
 function drawPOIs() {
@@ -224,10 +316,7 @@ function drawPOIs() {
       for (var entrynumber in results.rows) {
         var entry = results.rows[entrynumber];
         var marker = L.marker(entry.value.geometry.coordinates).addTo(poiLayer);
-        // var content = '<a class="popupname">' + entry.value.properties.name + '</a><div href="#" class="inpopup popup-details" onclick="showDetails(\'' + entry.value.properties.name + '\');"></div><div class="inpopup popup-close"><a href="#close"></a></div>';
         var content = '<p class="popupname">' + entry.value.properties.name + '</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value.properties.name + '\');">...</a>';
-        // marker.bindPopup(L.popup({closeButton: false}).setContent(content));
-        // marker.bindPopup(entry.value.properties.name);
         marker.bindPopup(content);
       };
     }).catch(function (error) {
@@ -236,7 +325,9 @@ function drawPOIs() {
 }
 
 function showDetails(name) {
-  document.getElementById('details-name').innerHTML = name;
+  $('#details-name').text(name);
   // map.closePopup();
   window.location = '#page-details';
 }
+
+// deviceIsReady();
