@@ -4,7 +4,7 @@ var map;
 var poiLayer = L.layerGroup();
 var remotePOIDB;
 var localPOIDB;
-var REMOTE_DB_ADDR = 'http://gi88.geoinfo.tuwien.ac.at:5984/refu';
+var REMOTE_DB_ADDR = 'http://gi88.geoinfo.tuwien.ac.at:5984/refu_2';
 var addMode = false;
 
 var language;
@@ -278,6 +278,7 @@ function addModeOff() {
 }
 
 function addPlace(evt) {
+  
   console.log('<addplace>');
   var name = prompt("Name of the Place:");
   if (name == undefined || name == "" || name == null)
@@ -316,18 +317,45 @@ function drawPOIs() {
       for (var entrynumber in results.rows) {
         var entry = results.rows[entrynumber];
         var marker = L.marker(entry.value.geometry.coordinates).addTo(poiLayer);
-        var content = '<p class="popupname">' + entry.value.properties.name + '</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value.properties.name + '\');">...</a>';
+        var content = '<p class="popupname">' + entry.value.properties.name + '(' + entry.value.properties.category + ')</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value._id + '\');">...</a>';
         marker.bindPopup(content);
+		console.log(entry.value)
       };
     }).catch(function (error) {
         console.log(error);
     });
 }
-
-function showDetails(name) {
-  $('#details-name').text(name);
-  // map.closePopup();
-  window.location = '#page-details';
+function showDetails(id){
+		map.closePopup();
+		window.location = '#page-details';
+	    localPOIDB.get(id).then(function(doc){
+		$('#details-name').text(doc.properties.name);
+		$('#desc-category').text(doc.properties.category);
+		$('#desc-description').text(doc.properties["desc:en"]);
+		$('#desc-phone').text(doc.properties.phone);
+		$('#desc-address').text(doc.properties.address);
+		$('#desc-website').text(doc.properties.website);
+		console.log(doc.properties.name)
+	}).catch(function(err){console.log(err);});
+	
+}
+function addpage(){
+		window.location = "#page-add"
 }
 
+function addplace(){
+	 var name = $("#add-placename").val();
+	 var description = $("#add-desc").val();
+	 var email = $("#add-email").val();
+	 var category = $("#add-category").val();
+	 var address = $("#add-address").val();
+	 var website = $("#add-website").val();
+	 console.log(name);
+	
+}
+
+function addplacetopouch(){
+	localPOIDB.put(doc1).then(refresh).catch(errorStoring);
+}
+		
 // deviceIsReady();

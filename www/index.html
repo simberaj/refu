@@ -45,8 +45,12 @@
             <h1 id="details-name">Place name</h1>
           </div>
           <div data-role="content">
-            <p class="desc-category">Place category</p>
-            <form method="post">
+			<h3>Category: <span  id = "desc-category" class="desc-category">Place category</span></h3>
+            <p id = "desc-description" class="desc-description">Sorry, no description in English for this place!</p>
+			<p id= "desc-address"></p>
+			<p id= "desc-website"></p>
+			<p id= "desc-phone"></p>
+			 <form method="post">
               <fieldset class="ui-field-contain">
                 <label for="desc-lang" id="desc-label">Description language...</label>
                 <select name="desc-lang" id="desc-lang">
@@ -56,8 +60,8 @@
                 </select>
               </fieldset>
             </form>
-            <p class="desc-description">Sorry, no description in English for this place!</p>
-            <a data-role="button" onclick="" class="ui-btn ui-icon-plus ui-btn-icon-left"id="desc-add">Add description in English...</a>
+            <a data-role="button" onclick="adddescription()" class="ui-btn ui-icon-plus ui-btn-icon-left"id="desc-add">Add description in English...</a>
+			 <a data-role="button" onclick="addpage()" class="ui-btn ui-icon-plus ui-btn-icon-left"id="desc-add">Go to add page.</a>
             <div class="ui-grid-a ui-responsive">
               <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-check ui-btn-icon-left ui-block-a" id="place-found">Been there</a>
               <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-delete ui-btn-icon-left ui-block-b" id="place-notfound">Not found</a>
@@ -66,9 +70,9 @@
           </div>        
         </div>
         
-        <!-- The add new place page. The adding onclick listener should redirect here
+ 
         <div data-role="page" data-dialog="true" id="page-add">
-          <form method="post">
+          <form method="post" id="post_desc">
             <div data-role="header">
               <input type="text" name="add-placename" id="add-placename" placeholder="Add place name" />
             </div>
@@ -79,12 +83,16 @@
                   <option value="wifi">Wi-Fi access point</option>
                   <option value="accomodation">Accomodation</option>
                 </select>
-                <textarea name="add-desc" id="add-desc" placeholder="Add description..."></textarea>
-                <input type="email" name="email" id="email" placeholder="My e-mail" />
+                <textarea name="add-desc" id="add-desc" placeholder="Add description..." rows="8"></textarea>
+				<input type="text" name="address" id="add-address" placeholder="Address..."/>
+				<input type="text" name="website" id="add-website" placeholder="Website..."/>
+				<input type = "text" name="phonenumber" id="add-phone" placeholder="Phone number"/>
+                <input type="email" name="email" id="add-email" placeholder="My e-mail" />
+				<input type="submit" id="submit-desc" placeholder="Submit"/>
               </fieldset>
             </div>        
           </form>
-        </div> <!-- end page-add -->
+        </div>
 
         <div data-role="page" id="page-options">
           <div data-role="header">
