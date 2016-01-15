@@ -255,7 +255,7 @@ function switchAddMode() {
 
 function addModeOn() {
   console.log('<addmode=true>');
-  map.on('click', addPlace);
+  map.on('click', gotoaddpage);
   $('#add-mode-off').show();
   $('#add-mode-on').hide();
   $('.command-add').toggleClass('command-button', false);
@@ -332,7 +332,7 @@ function showDetails(id){
 		$('#details-name').text(doc.properties.name);
 		$('#desc-category').text(doc.properties.category);
 		$('#desc-description').text(doc.properties["desc:en"]);
-		$('#desc-phone').text(doc.properties.phone);
+		$('#desc-phone').text(doc.properties.telephone);
 		$('#desc-address').text(doc.properties.address);
 		$('#desc-website').text(doc.properties.website);
 		console.log(doc.properties.name)
@@ -340,22 +340,48 @@ function showDetails(id){
 	
 }
 function addpage(){
-		window.location = "#page-add"
+		window.location = "#page-add";
+}
+function gotoaddpage(evt){
+	window.location = '#page-add'
+	$('#coords-field').text([evt.latlng.lat, evt.latlng.lng])
+	
 }
 
-function addplace(){
+function addplace_(evt){
+	 var coor = $("#coords-field").val();
 	 var name = $("#add-placename").val();
 	 var description = $("#add-desc").val();
 	 var email = $("#add-email").val();
 	 var category = $("#add-category").val();
 	 var address = $("#add-address").val();
 	 var website = $("#add-website").val();
-	 console.log(name);
+	 var telephone = $("#add-phone").val();
+	 var properties = {
+			"name": name,
+			"category": category,
+			"address": address,
+			"desc:en": description,
+			"verified": 0,
+			"diapprooved": 0,
+			"website": website,
+			"telephone": telephone
+			};		
+	 var doc =  {"_id" : properties.name.replace(/\s/g, "") + (Math.random() * 1000000),
+		"geometry" : {"type" : "Point", "coordinates" : coor }, 
+		"properties" : properties
+	 };
+	console.log(doc);
+	addplacetopouch(doc);
 	
-}
+	}
+$("#post-add").submit(addplace_);
+	// console.log(doc));
+	//addplace()
+	
+//$("#post-add").submit(addplace());
 
-function addplacetopouch(){
-	localPOIDB.put(doc1).then(refresh).catch(errorStoring);
+function addplacetopouch(doc){
+	localPOIDB.put(doc).then(refresh).catch(errorStoring);
 }
-		
 // deviceIsReady();
