@@ -362,6 +362,7 @@ function initDescription(props) {
     }
   }
   var langSelect = $("#desc-lang");
+  langSelect.empty();
   for (var i = 0; i < avail.length; i++) {
     langSelect.append(createLangOption(avail[i]));
   }
@@ -375,7 +376,7 @@ function initDescription(props) {
   }
   // select the user's language
   langSelect.val(language);
-  // hack to make the current option visible
+  // hack on jquery (hides the select and displays a span instead) to make the current option visible
   $('#desc-lang-button span:first').text(translation[language][language]);
   // show description in current language
   changeDescLang();
@@ -399,7 +400,7 @@ function changeDescLang() {
 function getAvailableDescriptionLanguages(props) {
   var avail = [];
   for (prop in props) {
-    if (prop.substr(0, 4) == "desc") {
+    if (prop.substr(0, 4) == "desc" && prop.search('author') == -1) {
       avail.push(prop.substr(5));
     }
   }
@@ -409,10 +410,15 @@ function getAvailableDescriptionLanguages(props) {
 function showDescription(lang) {
   var curDesc = currentDoc.properties["desc:" + lang];
   console.log(curDesc);
-  if (!curDesc)
+  if (curDesc) {
+    $('#desc-add').hide();
+  } else {
+    // no description found, display the button to add it
     curDesc = gettextFormatted('noDescriptionReport', lang);
+    $('#desc-add').text(gettextFormatted('descAddPrompt', lang));
+    $('#desc-add').show();
+  }
   $('#desc-description').text(curDesc);
-  $('#desc-add').text(gettextFormatted('descAddPrompt', lang));
 }
 
 function updateRating(props) {
@@ -421,7 +427,7 @@ function updateRating(props) {
   $('#desc-disapproved').text(props.disapproved.length);
   var userEmail = $("#user-email").val();
   // disable rating if user has already rated
-  if (userEmail) { 
+  if (userEmail) {
     if (props.verified.indexOf(userEmail) != -1)
       $('#place-found').attr("disabled", "disabled");
     if (props.disapproved.indexOf(userEmail) != -1)
@@ -452,10 +458,51 @@ function addPlace(evt){
 			"telephone" :          $("#add-phone").val(),
       "creator" :            email
 	};
-  // outside because js does not allow expressions in keys
+  // outside because js seemingly does not allow expressions in keys
   properties["desc:" + language] = $("#add-desc").val();
   newDBEntry(coor, properties);
   addModeOff();
+}
+
+function addDescription() {
+  // refer to the add description page
+  var userEmail = $("#user-email").val();
+  if (userEmail) {
+    $('#descadd-header').text(currentDoc.properties.name);
+    console.log($('#desc-lang').val());
+    console.log(gettextFormatted('descAddPrompt', $('#desc-lang').val()));
+    $('#descadd-text').attr('placeholder', gettextFormatted('descAddPrompt', $('#desc-lang').val()));
+    // $('#post-descadd').submit(saveDescription);
+    window.location = '#page-descadd';
+  } else {
+    alert(gettext('noEditingWithoutEmail'));
+  }
+}
+
+function saveDescription() {
+  var lang = $('#desc-lang').val();
+  var desc = $('#descadd-text').val();
+  var userEmail = $("#user-email").val();
+  if (desc) {
+    props = currentDoc.properties;
+    console.log('<save-desc place=' + props.name + ' desc=' + desc + '>');
+    if (props['desc:' + lang] != desc) {
+      props['desc:' + lang] = desc;
+      props['desc:author:' + lang] = userEmail;
+      console.log(currentDoc);
+      localPOIDB.put(currentDoc).then(function(doc) {
+        currentDoc._rev = doc.rev;
+        showDescription(lang);
+      }).catch(function (err) {
+        oldrev = currentDoc._rev;
+        currentDoc = localPOIDB.get(currentDoc._id);
+        if (currentDoc._rev != oldrev)
+          saveDescription();
+      });
+    }
+  }
+  initDescription();
+  window.location = '#page-details';
 }
 
 function rateCurrent(how) { // after pushing "Verify"|"Not here"
@@ -502,7 +549,7 @@ function rateCurrent(how) { // after pushing "Verify"|"Not here"
         });
       }
     } else {
-      alert(gettext('noRatingWithoutEmail'));
+      alert(gettext('noEditingWithoutEmail'));
     }
   }  
 }

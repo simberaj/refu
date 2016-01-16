@@ -67,6 +67,19 @@
           </div>        
         </div>
         
+        <div data-role="page" data-dialog="true" id="page-descadd">
+          <div data-role="header">
+            <h1 id="descadd-header">Place name</h1>
+          </div>
+          <div data-role="content">
+            <form method="post" id="post-descadd">
+              <fieldset class="ui-field-contain">
+                <textarea name="descadd-text" id="descadd-text" placeholder="Add description in English..." rows="8"></textarea>
+                <button id="submit-desc" onclick="saveDescription();">Submit</button>
+              </fieldset>          
+            </form>
+          </div>
+        </div>
  
         <div data-role="page" data-dialog="true" id="page-add">
           <form method="post" id="post-add">

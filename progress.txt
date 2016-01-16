@@ -7,8 +7,8 @@ TODO: OSM querying (Overpass API) (Jan)
 TODO: OSM points local storage (Jan)
 TODO: OSM points display (Jan)
 TODO: Adding a new language? (Jan)
-TODO: Description adding (Jan)
 TODO: Adding localized elements (Jan)
+TODO: Description editing (Jan)
 TODO: Localizing the user interface (Arda)
 TODO: Add more POIs (Arda)
 ---------------------------------------------------
@@ -31,3 +31,4 @@ DONE: Example POI
 DONE: Verify/Not here on display page
 DONE: Description language choice
 DONE: Multilingual support
+DONE: Description adding
