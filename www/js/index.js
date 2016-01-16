@@ -342,6 +342,7 @@ function showDetails(id){
     $('#desc-phone').text(doc.properties.telephone);
     $('#desc-address').text(doc.properties.address);
     $('#desc-website').text(doc.properties.website);
+    
     updateRating(doc.properties);
 	}).catch(function(err){console.log(err);});
 }
@@ -425,7 +426,12 @@ function rateCurrent(how) { // after pushing "Verify"|"Not here"
           // console.log(doc);
           currentDoc._rev = doc.rev;
           updateRating(props);
-        }).catch(errorStoring);
+        }).catch(function (err) {
+          oldrev = currentDoc._rev;
+          currentDoc = localPOIDB.get(currentDoc._id);
+          if (currentDoc._rev != oldrev)
+            rateCurrent(how);
+        });
       }
     } else {
       alert(gettext('noRatingWithoutEmail'));
