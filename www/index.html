@@ -54,14 +54,11 @@
             <form method="post">
               <fieldset class="ui-field-contain">
                 <label for="desc-lang" id="desc-label">Description language...</label>
-                <select name="desc-lang" id="desc-lang">
-                  <option value="en">English</option>
-                  <option value="ar">Arabic</option>
-                  <option value="de">German</option>
+                <select name="desc-lang" id="desc-lang" onchange="changeDescLang();">
                 </select>
               </fieldset>
             </form>
-            <a data-role="button" onclick="adddescription()" class="ui-btn ui-icon-plus ui-btn-icon-left"id="desc-add">Add description in English...</a>
+            <button onclick="addDescription();" class="ui-btn ui-icon-plus ui-btn-icon-left" id="desc-add" >Add description in English...</button>
             <!-- <div class="ui-grid-a ui-responsive"> -->
             <button onclick="rateCurrent(true);" class="ui-btn ui-icon-check ui-btn-icon-left" id="place-found">Been there</button>
             <button onclick="rateCurrent(false);" class="ui-btn ui-icon-delete ui-btn-icon-left" id="place-notfound">Not found</button>

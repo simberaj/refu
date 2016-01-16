@@ -17,12 +17,18 @@ var storeErrorText;
 var currentDoc = "";
 
 function gettext(key) {
+  var trans;
   if (key in translation[language]) {
-    return translation[language][key];
+    trans = translation[language][key];
   } else {
-    console.log(key);
-    return translation['en'][key];
+    console.log('<translation-missing lang=' + language + ' key=' + key + '>');
+    trans = translation['en'][key];
   }
+  return trans;
+}
+
+function gettextFormatted(key, lang) {
+  return gettext(key).replace('%l', translation[lang][lang]);
 }
 
 var translateMap = {
@@ -34,7 +40,6 @@ var translateMap = {
     "category-header" : "categories",
     "placelist-header" : "places",
     "desc-label" : "descLangPrompt",
-    "desc-add" : "descAddPrompt",
     "place-found" : "placeFound",
     "place-notfound" : "placeNotFound",
     "route-button" : "findRoute",
@@ -334,17 +339,80 @@ function showDetails(id){
   localPOIDB.get(id).then(function(doc){
     console.log('<show-details name=' + doc.properties.name + '>');
     currentDoc = doc;
+    var props = doc.properties;
     // TODO: the fields must be cleared if the data is not available
     // (right now, the data from the previous point are shown)
-    $('#details-name').text(doc.properties.name);
-    $('#desc-category').text(doc.properties.category);
-    $('#desc-description').text(doc.properties["desc:" + language]);
-    $('#desc-phone').text(doc.properties.telephone);
-    $('#desc-address').text(doc.properties.address);
-    $('#desc-website').text(doc.properties.website);
-    
+    $('#details-name').text(props.name);
+    $('#desc-category').text(props.category);
+    $('#desc-phone').text(props.telephone);
+    $('#desc-address').text(props.address);
+    $('#desc-website').text(props.website);
+    initDescription(props);
     updateRating(doc.properties);
 	}).catch(function(err){console.log(err);});
+}
+
+function initDescription(props) {
+  // offer alternatives
+  var avail = getAvailableDescriptionLanguages(props);
+  var notavail = [];
+  for (lang in translation) {
+    if (avail.indexOf(lang) == -1) { // if not available
+      notavail.push(lang);
+    }
+  }
+  var langSelect = $("#desc-lang");
+  for (var i = 0; i < avail.length; i++) {
+    langSelect.append(createLangOption(avail[i]));
+  }
+  if (notavail.length > 0) {
+    var notavailGroup = document.createElement('optgroup');
+    notavailGroup.label = gettext('noDescLang');
+    langSelect.append(notavailGroup);
+    for (var i = 0; i < notavail.length; i++) {
+      notavailGroup.appendChild(createLangOption(notavail[i]));
+    }
+  }
+  // select the user's language
+  langSelect.val(language);
+  // hack to make the current option visible
+  $('#desc-lang-button span:first').text(translation[language][language]);
+  // show description in current language
+  changeDescLang();
+}
+
+function createLangOption(lang) {
+  var opt = document.createElement('option');
+  var langName = lang;
+  if (lang in translation)
+    langName = translation[lang][lang];
+  opt.value = lang;
+  opt.text = langName;
+  return opt;
+}
+
+function changeDescLang() {
+  console.log('<change-desc-lang />');
+  showDescription($('#desc-lang').val());
+}
+
+function getAvailableDescriptionLanguages(props) {
+  var avail = [];
+  for (prop in props) {
+    if (prop.substr(0, 4) == "desc") {
+      avail.push(prop.substr(5));
+    }
+  }
+  return avail;
+}
+
+function showDescription(lang) {
+  var curDesc = currentDoc.properties["desc:" + lang];
+  console.log(curDesc);
+  if (!curDesc)
+    curDesc = gettextFormatted('noDescriptionReport', lang);
+  $('#desc-description').text(curDesc);
+  $('#desc-add').text(gettextFormatted('descAddPrompt', lang));
 }
 
 function updateRating(props) {
