@@ -14,6 +14,8 @@ language = "en";
 var noDescReport;
 var storeErrorText;
 
+var currentDoc = "";
+
 function gettext(key) {
   if (key in translation[language]) {
     return translation[language][key];
@@ -74,8 +76,8 @@ function translate() {
   noDescReport = gettext('noDescriptionReport');
   storeErrorText = gettext('storeError');
   commands.translate();
-  if (language != "en")
-    alert('translating ended');
+  // if (language != "en")
+    // alert('translating ended');
   console.log('</translate: ' + language + '>');
 }
 
@@ -255,7 +257,8 @@ function switchAddMode() {
 
 function addModeOn() {
   console.log('<addmode=true>');
-  map.on('click', gotoaddpage);
+  map.on('click', gotoAddPage);
+  $('#post-add').submit(addPlace);
   $('#add-mode-off').show();
   $('#add-mode-on').hide();
   $('.command-add').toggleClass('command-button', false);
@@ -277,22 +280,22 @@ function addModeOff() {
   console.log('</addmode=false>');
 }
 
-function addPlace(evt) {
-  
-  console.log('<addplace>');
-  var name = prompt("Name of the Place:");
-  if (name == undefined || name == "" || name == null)
-    return;
-  var creator = device.uuid;
-  if (creator == undefined) {
-    creator = 'browser';
-  }
-  newDBEntry([evt.latlng.lat, evt.latlng.lng], {"name" : name, "creator" : creator});
-  addModeOff();
-}
+// function addPlace(evt) {
+  // console.log('<addplace>');
+  // var name = prompt("Name of the Place:");
+  // if (name == undefined || name == "" || name == null)
+    // return;
+  // var creator = device.uuid;
+  // if (creator == undefined) {
+    // creator = 'browser';
+  // }
+  // newDBEntry([evt.latlng.lat, evt.latlng.lng], {"name" : name, "creator" : creator});
+  // addModeOff();
+// }
 
 function newDBEntry(coor, props) {
-  var doc = {"_id" : props.name.replace(/\s/g, "") + (Math.random() * 1000000),
+  var doc = {
+    "_id" : props.name.replace(/\s/g, "").slice(0,10) + parseInt(Math.random() * 1000000000000).toString(16), // first 10 chars of name followed by 12 random hexdigits
     "type" : "Feature",
     "geometry" : {"type" : "Point", "coordinates" : coor},
     "properties" : props
@@ -319,69 +322,113 @@ function drawPOIs() {
         var marker = L.marker(entry.value.geometry.coordinates).addTo(poiLayer);
         var content = '<p class="popupname">' + entry.value.properties.name + '(' + entry.value.properties.category + ')</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value._id + '\');">...</a>';
         marker.bindPopup(content);
-		console.log(entry.value)
+        console.log(entry.value);
       };
     }).catch(function (error) {
         console.log(error);
     });
 }
 function showDetails(id){
-		map.closePopup();
-		window.location = '#page-details';
-	    localPOIDB.get(id).then(function(doc){
-		$('#details-name').text(doc.properties.name);
-		$('#desc-category').text(doc.properties.category);
-		$('#desc-description').text(doc.properties["desc:en"]);
-		$('#desc-phone').text(doc.properties.telephone);
-		$('#desc-address').text(doc.properties.address);
-		$('#desc-website').text(doc.properties.website);
-		console.log(doc.properties.name)
+  map.closePopup();
+  window.location = '#page-details';
+  localPOIDB.get(id).then(function(doc){
+    console.log('<show-details name=' + doc.properties.name + '>');
+    currentDoc = doc;
+    // TODO: the fields must be cleared if the data is not available
+    // (right now, the data from the previous point are shown)
+    $('#details-name').text(doc.properties.name);
+    $('#desc-category').text(doc.properties.category);
+    $('#desc-description').text(doc.properties["desc:" + language]);
+    $('#desc-phone').text(doc.properties.telephone);
+    $('#desc-address').text(doc.properties.address);
+    $('#desc-website').text(doc.properties.website);
+    updateRating(doc.properties);
 	}).catch(function(err){console.log(err);});
-	
-}
-function addpage(){
-		window.location = "#page-add";
-}
-function gotoaddpage(evt){
-	window.location = '#page-add'
-	$('#coords-field').text([evt.latlng.lat, evt.latlng.lng])
-	
 }
 
-function addplace_(evt){
-	 var coor = $("#coords-field").val();
-	 var name = $("#add-placename").val();
-	 var description = $("#add-desc").val();
-	 var email = $("#add-email").val();
-	 var category = $("#add-category").val();
-	 var address = $("#add-address").val();
-	 var website = $("#add-website").val();
-	 var telephone = $("#add-phone").val();
-	 var properties = {
-			"name": name,
-			"category": category,
-			"address": address,
-			"desc:en": description,
-			"verified": 0,
-			"diapprooved": 0,
-			"website": website,
-			"telephone": telephone
-			};		
-	 var doc =  {"_id" : properties.name.replace(/\s/g, "") + (Math.random() * 1000000),
-		"geometry" : {"type" : "Point", "coordinates" : coor }, 
-		"properties" : properties
-	 };
-	console.log(doc);
-	addplacetopouch(doc);
-	
-	}
-$("#post-add").submit(addplace_);
-	// console.log(doc));
-	//addplace()
-	
-//$("#post-add").submit(addplace());
-
-function addplacetopouch(doc){
-	localPOIDB.put(doc).then(refresh).catch(errorStoring);
+function updateRating(props) {
+  // number of people who rated that or that way
+  $('#desc-verified').text(props.verified.length);
+  $('#desc-disapproved').text(props.disapproved.length);
+  var userEmail = $("#user-email").val();
+  // disable rating if user has already rated
+  if (userEmail) { 
+    if (props.verified.indexOf(userEmail) != -1)
+      $('#place-found').attr("disabled", "disabled");
+    if (props.disapproved.indexOf(userEmail) != -1)
+      $('#place-notfound').attr("disabled", "disabled");
+  }
 }
-// deviceIsReady();
+
+function gotoAddPage(evt){
+  // TODO: this saves a string, not the list - must be modified
+	$('#coords-field').text([evt.latlng.lat, evt.latlng.lng]);
+  // if user has email in options, supply it for him
+  var userEmail = $("#user-email").val();
+  if (userEmail)
+    $("#add-email").val(userEmail);
+	window.location = '#page-add';
+}
+
+function addPlace(evt){
+	var coor = $("#coords-field").val();
+	var email = $("#add-email").val();
+	var properties = {
+			"name" :               $("#add-placename").val(),
+			"category" :           $("#add-category").val(),
+			"address" :            $("#add-address").val(),
+			"verified" :           [email],
+			"disapproved" :        [],
+			"website" :            $("#add-website").val(),
+			"telephone" :          $("#add-phone").val(),
+      "creator" :            email
+	};
+  // outside because js does not allow expressions in keys
+  properties["desc:" + language] = $("#add-desc").val();
+  newDBEntry(coor, properties);
+  addModeOff();
+}
+
+function rateCurrent(how) { // after pushing "Verify"|"Not here"
+  if (currentDoc) {
+    var props = currentDoc.properties;
+    console.log('<rate place=' + props.name + ' status=' + how + '>');
+    var userEmail = $("#user-email").val();
+    if (userEmail) {
+      // find what to change
+      var rated, derated;
+      if (how) {
+        rated = props.verified;
+        derated = props.disapproved;
+      } else {
+        rated = props.disapproved;
+        derated = props.verified;      
+      }
+      // if valued positively, remove possible negative rating
+      var deI = derated.indexOf(userEmail);
+      var update = false;
+      // console.log(deI);
+      if (deI != -1) {
+        derated.splice(deI, 1); // removes from array
+        update = true;
+      }
+      if (rated.indexOf(userEmail) == -1) { // if not rated yet
+        rated.push(userEmail);
+        update = true;
+      }
+      // console.log(props.verified);
+      // console.log(props.disapproved);
+      console.log(currentDoc);
+      if (update) {
+        localPOIDB.put(currentDoc).then(function(doc) {
+          // console.log(currentDoc._rev);
+          // console.log(doc);
+          currentDoc._rev = doc.rev;
+          updateRating(props);
+        }).catch(errorStoring);
+      }
+    } else {
+      alert(gettext('noRatingWithoutEmail'));
+    }
+  }  
+}

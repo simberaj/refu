@@ -20,7 +20,7 @@
 
         <div data-role="page" data-dialog="true" id="page-search">
           <div data-role="header">
-            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">Map</a>
+            <a href="#page-map" data-role="button" data-inline="true" data-icon="back"></a>
             <h1 id="search-header">Search</h1>
           </div>
           <div data-role="content">
@@ -45,12 +45,13 @@
             <h1 id="details-name">Place name</h1>
           </div>
           <div data-role="content">
-			<h3>Category: <span  id = "desc-category" class="desc-category">Place category</span></h3>
-            <p id = "desc-description" class="desc-description">Sorry, no description in English for this place!</p>
-			<p id= "desc-address"></p>
-			<p id= "desc-website"></p>
-			<p id= "desc-phone"></p>
-			 <form method="post">
+            <h3>Category: <span id="desc-category" class="desc-category">Place category</span></h3>
+            <p id="desc-description" class="desc-description">Sorry, no description in English for this place!</p>
+            <p id="desc-address"></p>
+            <p id="desc-website"></p>
+            <p id="desc-phone"></p>
+            <p><span id="desc-verified">?</span>/<span id="desc-disapproved">?</span>
+            <form method="post">
               <fieldset class="ui-field-contain">
                 <label for="desc-lang" id="desc-label">Description language...</label>
                 <select name="desc-lang" id="desc-lang">
@@ -61,12 +62,11 @@
               </fieldset>
             </form>
             <a data-role="button" onclick="adddescription()" class="ui-btn ui-icon-plus ui-btn-icon-left"id="desc-add">Add description in English...</a>
-			 <a data-role="button" onclick="addpage()" class="ui-btn ui-icon-plus ui-btn-icon-left"id="desc-add">Go to add page.</a>
-            <div class="ui-grid-a ui-responsive">
-              <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-check ui-btn-icon-left ui-block-a" id="place-found">Been there</a>
-              <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-delete ui-btn-icon-left ui-block-b" id="place-notfound">Not found</a>
-            </div>
-            <a data-role="button" data-inline="true" onclick="" class="ui-btn ui-icon-navigation ui-btn-icon-left" id="route-button">Route to place</a>
+            <!-- <div class="ui-grid-a ui-responsive"> -->
+            <button onclick="rateCurrent(true);" class="ui-btn ui-icon-check ui-btn-icon-left" id="place-found">Been there</button>
+            <button onclick="rateCurrent(false);" class="ui-btn ui-icon-delete ui-btn-icon-left" id="place-notfound">Not found</button>
+            <!-- </div> -->
+            <button onclick="" class="ui-btn ui-icon-navigation ui-btn-icon-left" id="route-button">Route to place</a>
           </div>        
         </div>
         
@@ -84,12 +84,12 @@
                   <option value="accomodation">Accomodation</option>
                 </select>
                 <textarea name="add-desc" id="add-desc" placeholder="Add description..." rows="8"></textarea>
-				<input type="text" name="address" id="add-address" placeholder="Address..."/>
-				<input type="text" name="website" id="add-website" placeholder="Website..."/>
-				<input type = "text" name="phonenumber" id="add-phone" placeholder="Phone number"/>
+                <input type="text" name="address" id="add-address" placeholder="Address..."/>
+                <input type="text" name="website" id="add-website" placeholder="Website..."/>
+                <input type="text" name="phonenumber" id="add-phone" placeholder="Phone number"/>
                 <input type="email" name="email" id="add-email" placeholder="My e-mail" />
-				<p >Coordinates(Lat,Lon): <span id="coords-field"></span> </p>
-				<input type="submit" id="submit-desc" placeholder="Submit"/>
+				<p >Coordinates(Lat,Lon):<span id="coords-field"></span></p>
+                <input type="submit" id="submit-desc" value="Submit"/>
               </fieldset>
             </div>        
           </form>

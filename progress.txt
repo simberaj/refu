@@ -1,20 +1,17 @@
-TODO: Example POI (Arda)
+TODO: Details display page - better user interface, clear when point has the property not defined (Arda)
 TODO: Markers and display (Arda)
-TODO: Details display page (Arda)
-TODO: Verify/Not here on display page (Jan)
 TODO: Adding a new point (Arda)
 TODO: Searching (Jan)
 TODO: Layer display/filtering (Jan)
 TODO: OSM querying (Overpass API) (Jan)
 TODO: OSM points local storage (Jan)
 TODO: OSM points display (Jan)
-TODO: Initial database fill (Arda)
 TODO: Multilingual support (Jan)
 TODO: Description language choice (Jan)
 TODO: Description adding (Jan)
-TODO: Adding basic languages (Jan)
-TODO: Localization support (Jan)
+TODO: Adding localized elements (Jan)
 TODO: Localizing the user interface (Arda)
+TODO: Add more POIs (Arda)
 ---------------------------------------------------
 NTH:  Local tile storage
 NTH:  Images in descriptions
@@ -28,3 +25,8 @@ DONE: Sliding button interface on the map page
 DONE: Locate Me
 DONE: Popup display
 DONE: Basic page structure
+DONE: Localization support
+DONE: Adding basic languages
+DONE: Initial database fill
+DONE: Example POI
+DONE: Verify/Not here on display page
