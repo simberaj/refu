@@ -306,7 +306,9 @@ function newDBEntry(coor, props) {
     "properties" : props
   };
   console.log(doc);
+  console.log(coor);
   localPOIDB.put(doc).then(refresh).catch(errorStoring);
+  window.location = '#page-map';
 }
 
 function refresh(evt) {
@@ -437,16 +439,33 @@ function updateRating(props) {
 
 function gotoAddPage(evt){
   // TODO: this saves a string, not the list - must be modified
+    $('#add-placename').val('');
+    $('#add-category').val('');
+    $('#add-address').val('');
+    $('#add-phone').val('');
+    $('#add-website').val('');
+	$('#add-desc').val('');
 	$('#coords-field').text([evt.latlng.lat, evt.latlng.lng]);
+	$('#lat').val(evt.latlng.lat);
+	$('#lng').val(evt.latlng.lng);
+	
   // if user has email in options, supply it for him
   var userEmail = $("#user-email").val();
-  if (userEmail)
+  if (userEmail){
     $("#add-email").val(userEmail);
+  }
+  else{
+	  $("#add-email").val('');
+  };
 	window.location = '#page-add';
 }
 
 function addPlace(evt){
-	var coor = $("#coords-field").val();
+	var lat = $("#lat").val();
+	var lng = $("#lng").val();
+	var latf = parseFloat(lat);
+	var lngf = parseFloat(lng);
+	var coor = [latf, lngf];
 	var email = $("#add-email").val();
 	var properties = {
 			"name" :               $("#add-placename").val(),
