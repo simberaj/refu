@@ -342,8 +342,6 @@ function showDetails(id){
     console.log('<show-details name=' + doc.properties.name + '>');
     currentDoc = doc;
     var props = doc.properties;
-    // TODO: the fields must be cleared if the data is not available
-    // (right now, the data from the previous point are shown)
     $('#details-name').text(props.name);
     $('#desc-category').text(props.category);
     $('#desc-phone').text(props.telephone);
@@ -414,11 +412,14 @@ function showDescription(lang) {
   console.log(curDesc);
   if (curDesc) {
     $('#desc-add').hide();
+    $('#desc-edit').text(gettextFormatted('descEditPrompt', lang));
+    $('#desc-edit').show();
   } else {
     // no description found, display the button to add it
     curDesc = gettextFormatted('noDescriptionReport', lang);
     $('#desc-add').text(gettextFormatted('descAddPrompt', lang));
     $('#desc-add').show();
+    $('#desc-edit').hide();
   }
   $('#desc-description').text(curDesc);
 }
@@ -484,18 +485,29 @@ function addPlace(evt){
 }
 
 function addDescription() {
+  showDescriptionUpdater('');
+}
+
+function editDescription() {
+  showDescriptionUpdater($("#desc-description").text());
+}
+
+function showDescriptionUpdater(current) {
   // refer to the add description page
   var userEmail = $("#user-email").val();
   if (userEmail) {
     $('#descadd-header').text(currentDoc.properties.name);
-    console.log($('#desc-lang').val());
-    console.log(gettextFormatted('descAddPrompt', $('#desc-lang').val()));
+    // console.log($('#desc-lang').val());
+    // console.log(gettextFormatted('descAddPrompt', $('#desc-lang').val()));
+    console.log('<show-description-updater>');
+    console.log(currentDoc);
+    console.log(current);
+    $('#descadd-text').text(current);
     $('#descadd-text').attr('placeholder', gettextFormatted('descAddPrompt', $('#desc-lang').val()));
-    // $('#post-descadd').submit(saveDescription);
     window.location = '#page-descadd';
   } else {
     alert(gettext('noEditingWithoutEmail'));
-  }
+  }  
 }
 
 function saveDescription() {

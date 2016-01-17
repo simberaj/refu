@@ -1,6 +1,5 @@
-TODO: Details display page - better user interface, clear when point has the property not defined (Arda)
+TODO: Details display page - better user interface (Arda)
 TODO: Markers and display (Arda)
-TODO: Adding a new point (Arda)
 TODO: Searching (Jan)
 TODO: Layer display/filtering (Jan)
 TODO: OSM querying (Overpass API) (Jan)
@@ -11,12 +10,14 @@ TODO: Adding localized elements (Jan)
 TODO: Description editing (Jan)
 TODO: Localizing the user interface (Arda)
 TODO: Add more POIs (Arda)
+TODO: Interface polishing
 ---------------------------------------------------
+NTH:  POI commenting
 NTH:  Local tile storage
 NTH:  Images in descriptions
 NTH:  Routing
-NTH:  Labels
 NTH:  Spatial indexing
+NTH:  Labels
 
 DONE: POI document structure
 DONE: Map page correct display
@@ -32,3 +33,4 @@ DONE: Verify/Not here on display page
 DONE: Description language choice
 DONE: Multilingual support
 DONE: Description adding
+DONE: Adding a new point
