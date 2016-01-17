@@ -15,6 +15,10 @@ var noDescReport;
 var storeErrorText;
 
 var currentDoc = "";
+var currentPosition;
+var locationIcon = L.divIcon({className: 'location-icon'});
+var locationLayer = L.layerGroup();
+var routeLayer = L.layerGroup();
 
 function gettext(key) {
   var trans;
@@ -40,8 +44,8 @@ var translateMap = {
     "category-header" : "categories",
     "placelist-header" : "places",
     "desc-label" : "descLangPrompt",
-    "place-found" : "placeFound",
-    "place-notfound" : "placeNotFound",
+    "place-found-text" : "placeFound",
+    "place-notfound-text" : "placeNotFound",
     "route-button" : "findRoute",
     "options-header" : "options",
     "privacy-notice" : "privacyNotice",
@@ -185,10 +189,12 @@ function initMap() {
   commands.addTo(map);
   // map.addControl(new controlPanel());
   // locate the device
-  gotoLocation();
+  map.locate({setView: true, maxZoom: 16});
+  initWatchLocation();
   // add the POIs
   poiLayer.addTo(map);
   drawPOIs();
+  routeLayer.addTo(map);
   console.log('</initMap>');
 }
 
@@ -204,7 +210,31 @@ function initOptions() {
 }
 
 function gotoLocation() {
-  map.locate({setView: true, maxZoom: 16});
+  console.log('<gotoloc ' + currentPosition + '>');
+  map.panTo(currentPosition); // cannot use locate because custom watchLocation is on
+}
+
+function initWatchLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(storePosition);
+    locationLayer.addTo(map);
+  }
+}
+
+function storePosition(position) {
+  console.log('<store-position>');
+  currentPosition = [position.coords.latitude, position.coords.longitude];
+  currentAccuracy = position.coords.accuracy;
+  showPosition();
+}
+
+function showPosition() {
+  locationLayer.clearLayers();
+  console.log('<show-position>');
+  if (currentPosition) {
+    L.marker(currentPosition, {icon : locationIcon, clickable : false}).addTo(locationLayer);
+    L.circle(currentPosition, currentAccuracy, {weight : 1, clickable : false}).addTo(locationLayer);
+  }
 }
 
 function initSync() {
@@ -284,19 +314,6 @@ function addModeOff() {
   addMode = false;
   console.log('</addmode=false>');
 }
-
-// function addPlace(evt) {
-  // console.log('<addplace>');
-  // var name = prompt("Name of the Place:");
-  // if (name == undefined || name == "" || name == null)
-    // return;
-  // var creator = device.uuid;
-  // if (creator == undefined) {
-    // creator = 'browser';
-  // }
-  // newDBEntry([evt.latlng.lat, evt.latlng.lng], {"name" : name, "creator" : creator});
-  // addModeOff();
-// }
 
 function newDBEntry(coor, props) {
   var doc = {
@@ -502,7 +519,7 @@ function showDescriptionUpdater(current) {
     console.log('<show-description-updater>');
     console.log(currentDoc);
     console.log(current);
-    $('#descadd-text').text(current);
+    $('#descadd-text').val(current);
     $('#descadd-text').attr('placeholder', gettextFormatted('descAddPrompt', $('#desc-lang').val()));
     window.location = '#page-descadd';
   } else {
@@ -583,4 +600,36 @@ function rateCurrent(how) { // after pushing "Verify"|"Not here"
       alert(gettext('noEditingWithoutEmail'));
     }
   }  
+}
+
+function getMyLocation() {
+  navigator.geolocation.getCurrentPosition()
+}
+
+function routeToCurrent() {
+  console.log('<route from=' + currentPosition + ' to=' + currentDoc.geometry.coordinates + '>');
+  var query = 'http://router.project-osrm.org/viaroute?loc=' + currentPosition + '&loc=' + currentDoc.geometry.coordinates + '&instructions=true';
+  $.ajax({url : query}).done(showRoute).fail(errorRouting);
+}
+
+function showRoute(doc) {
+  console.log('<show-route>');
+  console.log(doc);
+  if (doc.status == 207) { // no route found
+    errorRouting(doc.status);
+  } else {
+    routeLayer.clearLayers();
+    line = polyline.decode(doc.route_geometry, 6);
+    console.log(line);
+    var route = L.polyline(line, {color: 'blue'}).addTo(routeLayer);
+    route.dblclick = function (evt) {map.fitBounds(route.getBounds());};
+    map.fitBounds(route.getBounds());
+    window.location = '#page-map';
+  }
+}
+
+function errorRouting(err) {
+  console.log('<error-route>');
+  console.log(err);
+  alert(gettext('routeError'));
 }

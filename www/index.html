@@ -63,7 +63,7 @@
             <button onclick="rateCurrent(true);" class="ui-btn ui-icon-check ui-btn-icon-left" id="place-found"><span id="place-found-text">Been there</span> (<span id="desc-verified">?</span>)</button>
             <button onclick="rateCurrent(false);" class="ui-btn ui-icon-delete ui-btn-icon-left" id="place-notfound"><span id="place-notfound-text">Been there</span> (<span id="desc-disapproved">?</span>)</button>
             <!-- </div> -->
-            <button onclick="" class="ui-btn ui-icon-navigation ui-btn-icon-left" id="route-button">Route to place</a>
+            <button onclick="routeToCurrent();" class="ui-btn ui-icon-navigation ui-btn-icon-left" id="route-button">Route to place</a>
           </div>        
         </div>
         
@@ -135,7 +135,7 @@
 
         <div data-role="page" id="page-about">
           <div data-role="header">
-            <a href="#page-options" data-role="button" data-inline="true" data-icon="back"></a>
+            <a href="#page-options" data-role="button" data-inline="true" data-icon="back">Options</a>
             <h1 id="about-header">About</h1>
           </div>
           <div data-role="content">
@@ -143,11 +143,23 @@
           </div>        
         </div>
         
+        <!-- NTH: route description -->
+<!--         <div data-role="page" id="page-route">
+          <div data-role="header">
+            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">Map</a>
+            <h1 id="about-header">From-To</h1>
+          </div>
+          <div data-role="content">
+          </div>        
+        </div>
+ -->        
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/leaflet.js"></script>
         <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
         <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
         <script type="text/javascript" src="js/pouchdb-5.1.0.min.js"></script>
+        <script type="text/javascript" src="js/polyline.js"></script>
+        <script type="text/javascript" src="js/categories.js"></script>
         <script type="text/javascript" src="js/translation.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
     </body>

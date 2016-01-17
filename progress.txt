@@ -7,7 +7,6 @@ TODO: OSM points local storage (Jan)
 TODO: OSM points display (Jan)
 TODO: Adding a new language? (Jan)
 TODO: Adding localized elements (Jan)
-TODO: Description editing (Jan)
 TODO: Localizing the user interface (Arda)
 TODO: Add more POIs (Arda)
 TODO: Interface polishing
@@ -15,7 +14,7 @@ TODO: Interface polishing
 NTH:  POI commenting
 NTH:  Local tile storage
 NTH:  Images in descriptions
-NTH:  Routing
+NTH:  Routing: directions display
 NTH:  Spatial indexing
 NTH:  Labels
 
@@ -34,3 +33,4 @@ DONE: Description language choice
 DONE: Multilingual support
 DONE: Description adding
 DONE: Adding a new point
+DONE: Description editing

@@ -30,3 +30,5 @@ div.popup-close a {line-height:26px;}
 div.inpopup:hover {background-color: #f4f4f4;}
  *//* a.inpopup {margin-top:5px; padding: 0 20px;} */
 div.leaflet-popup-content {text-align: center; margin: 5px 22px;}
+
+div.location-icon {background-color: #0033ff; height: 8px; width: 8px; border-radius: 8px; opacity: 0.5;}
