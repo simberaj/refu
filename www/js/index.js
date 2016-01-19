@@ -350,7 +350,7 @@ function drawPOIs() {
   console.log(categories);
   localPOIDB.query('poi/allpoi', {include_docs : true, attachments : true}).then(
     function(results) {
-      var entry, props, marker, content, coors;
+      var entry, props, marker, content, coors, cat;
       var searchBox = $('#search-results');
       poiLayer.clearLayers();
       $('.place-search').remove();
@@ -358,9 +358,11 @@ function drawPOIs() {
         entry = results.rows[entrynumber];
         props = entry.value.properties;
         coors = entry.value.geometry.coordinates;
-        if (!categories[props.category] || categories[props.category].display) {
+        cat = categories[props.category];
+        if (!cat || cat.display) {
+          // marker = L.marker(coors, {icon : cat.icon}).addTo(poiLayer);
           marker = L.marker(coors).addTo(poiLayer);
-          content = '<p class="popupname">' + props.name + '(' + props.category + ')</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value._id + '\');">...</a>';
+          content = '<p class="popupname">' + props.name + '(' + cat.code + ')</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value._id + '\');">...</a>';
           marker.bindPopup(content);
           var searchResult = '<li class="place-search"><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r" onclick="panTo([' + coors + ']);">' + props.name + '</a></li>';
           searchBox.append(searchResult);
@@ -622,10 +624,6 @@ function rateCurrent(how) { // after pushing "Verify"|"Not here"
   }  
 }
 
-function getMyLocation() {
-  navigator.geolocation.getCurrentPosition()
-}
-
 function routeToCurrent() {
   console.log('<route from=' + currentPosition + ' to=' + currentDoc.geometry.coordinates + '>');
   var query = 'http://valhalla.mapzen.com/route?json={"locations":[{"lat":' + 
@@ -677,6 +675,7 @@ function initCategories() {
     // into filtering
     filterCheck = '<label for="filter-cat-' + category + '" class="cat-' + category + '">categoryname</label><input type="checkbox" name="' + category + '" id="filter-cat-' + category + '" value="' + category + '" checked="checked" class="cat-filter-check">';
     filterList.append(filterCheck);
+    // categories[category].icon = L.divIcon({className: 'icon-' + category});
   }
   searchBox.append('<li data-role="list-divider" role="heading" id="placelist-header">Places</li>');
   // filterList.checkboxradio('refresh');
