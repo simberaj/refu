@@ -18,30 +18,44 @@
           </div>
         </div>
 
-        <div data-role="page" data-dialog="true" id="page-search">
+        <div data-role="page" id="page-search">
           <div data-role="header">
-            <a href="#page-map" data-role="button" data-inline="true" data-icon="back"></a>
+            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">&nbsp;</a>
             <h1 id="search-header">Search</h1>
           </div>
           <div data-role="content">
             <form class="ui-filterable">
               <input data-type="search" id="searchbox" placeholder="Enter text to search..." />
             </form>
-            <ul data-role="listview">
+            <ul data-role="listview" id="search-results">
               <li data-role="list-divider" role="heading" id="category-header">Categories</li>
                 <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Wi-Fi</a></li>
                 <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Accomodation</a></li>
-              <li data-role="list-divider" role="heading" id="placelist-header">Places</li>
-              <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">TU Wien</a></li>
-              <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Gußhausstraße</a></li>
             </ul>
+          </div>   
+        </div>
+              
+        <!-- The filtering page. -->
+        <div data-role="page" id="page-filter">
+          <div data-role="header">
+            <a href="#" data-role="button" data-inline="true" data-icon="back" onclick="filter();">&nbsp;</a>
+            <h1 id="filter-header">Choose what to display</h1>
+          </div>
+          <div data-role="content">
+            <button onclick="displayAll();" class="ui-btn ui-icon-check ui-btn-icon-left" id="filter-disp-all" >Display all</button>
+            <div class="ui-field-contain">
+              <form method="post">
+                <fieldset data-role="controlgroup" id="filter-list">
+                </fieldset>
+              </form>
+            </div>
           </div>   
         </div>
               
         <!-- The details page. The link from the popup should call a function to fill in this page and then refer to it. -->
         <div data-role="page" id="page-details">
           <div data-role="header">
-            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">Map</a>
+            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">&nbsp;</a>
             <h1 id="details-name">Place name</h1>
           </div>
           <div data-role="content">
@@ -90,8 +104,6 @@
               <fieldset class="ui-field-contain">
                 <label for="add-category">Category...</label>
                 <select name="add-category" id="add-category">
-                  <option value="wifi">Wi-Fi access point</option>
-                  <option value="accomodation">Accomodation</option>
                 </select>
                 <textarea name="add-desc" id="add-desc" placeholder="Add description..." rows="8"></textarea>
                 <input type="text" name="address" id="add-address" placeholder="Address..."/>
@@ -111,7 +123,7 @@
 
         <div data-role="page" id="page-options">
           <div data-role="header">
-            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">Map</a>
+            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">&nbsp;</a>
             <h1 id="options-header">Options</h1>
           </div>
           <div data-role="content">
@@ -156,10 +168,10 @@
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/leaflet.js"></script>
         <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="js/categories.js"></script>
         <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
         <script type="text/javascript" src="js/pouchdb-5.1.0.min.js"></script>
         <script type="text/javascript" src="js/polyline.js"></script>
-        <script type="text/javascript" src="js/categories.js"></script>
         <script type="text/javascript" src="js/translation.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
     </body>

@@ -5,6 +5,7 @@ var poiLayer = L.layerGroup();
 var remotePOIDB;
 var localPOIDB;
 var REMOTE_DB_ADDR = 'http://gi88.geoinfo.tuwien.ac.at:5984/refu_2';
+var VALHALLA_KEY = 'valhalla-glGvZII';
 var addMode = false;
 
 var language;
@@ -52,6 +53,7 @@ var translateMap = {
     "option-submit" : "save",
     "link-about" : "about",
     "about-header" : "about",
+    "filter-header" : "chooseFilter",
     "contact-form" : "sendMessagePrompt",
     "user-email-label" : "email",
     "user-lang-label" : "language"
@@ -77,17 +79,22 @@ function translate() {
       // elem.innerHTML = gettext(innerTrans[key]);
   }
   $('#searchbox').attr('placeholder', gettext('searchPrompt')); // TODO
-  // TODO: translate category names
-  // TODO: format with current language
   // TODO: add images to these (categories, places in search page)...
   // TODO: image to use for return-to-map
   // reports within the script
   noDescReport = gettext('noDescriptionReport');
   storeErrorText = gettext('storeError');
   commands.translate();
+  translateCategories();
   // if (language != "en")
     // alert('translating ended');
   console.log('</translate: ' + language + '>');
+}
+
+function translateCategories() {
+  for (category in categories) {
+    $('.cat-' + category).text(gettext('cat:' + category));
+  }  
 }
 
 function createButton(cls, container, options) {
@@ -124,7 +131,7 @@ L.Control.CommandPanel = L.Control.extend({
     this.collapseButton.onclick = this.collapse;
     this.locateButton = createButton('command-button command-locate', this.expanded, {title: 'Locate me'});
     this.locateButton.onclick = gotoLocation;
-    this.layerButton = createButton('command-button command-layer', this.expanded, {title: 'Choose what to display'});
+    this.layerButton = createButton('command-button command-layer', this.expanded, {title: 'Choose what to display', href : '#page-filter'});
     this.searchButton = createButton('command-button command-search', this.expanded, {title: 'Search', href: '#page-search'});
     this.addButton = createButton('command-button command-add', this.expanded, {title: 'Add place'});
     this.addButton.onclick = switchAddMode;
@@ -170,6 +177,7 @@ function deviceIsReady() {
   remotePOIDB = new PouchDB(REMOTE_DB_ADDR);
   localPOIDB = new PouchDB('mappoint');
   initSync();
+  initCategories();
   initMap();
   initOptions();
   translate();
@@ -195,6 +203,7 @@ function initMap() {
   poiLayer.addTo(map);
   drawPOIs();
   routeLayer.addTo(map);
+  $('#map').on('taphold', gotoAddPage);
   console.log('</initMap>');
 }
 
@@ -338,20 +347,25 @@ function errorStoring(err) {
 }
 
 function drawPOIs() {
+  console.log(categories);
   localPOIDB.query('poi/allpoi', {include_docs : true, attachments : true}).then(
     function(results) {
       poiLayer.clearLayers();
       for (var entrynumber in results.rows) {
         var entry = results.rows[entrynumber];
-        var marker = L.marker(entry.value.geometry.coordinates).addTo(poiLayer);
-        var content = '<p class="popupname">' + entry.value.properties.name + '(' + entry.value.properties.category + ')</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value._id + '\');">...</a>';
-        marker.bindPopup(content);
+        var cat = entry.value.properties.category;
+        if (!categories[cat] || categories[cat].display) {
+          var marker = L.marker(entry.value.geometry.coordinates).addTo(poiLayer);
+          var content = '<p class="popupname">' + entry.value.properties.name + '(' + entry.value.properties.category + ')</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value._id + '\');">...</a>';
+          marker.bindPopup(content);
+        }
         console.log(entry.value);
       };
     }).catch(function (error) {
         console.log(error);
     });
 }
+
 function showDetails(id){
   map.closePopup();
   window.location = '#page-details';
@@ -608,18 +622,24 @@ function getMyLocation() {
 
 function routeToCurrent() {
   console.log('<route from=' + currentPosition + ' to=' + currentDoc.geometry.coordinates + '>');
-  var query = 'http://router.project-osrm.org/viaroute?loc=' + currentPosition + '&loc=' + currentDoc.geometry.coordinates + '&instructions=true';
+  var query = 'http://valhalla.mapzen.com/route?json={"locations":[{"lat":' + 
+    currentPosition[0] + ',"lon":' + 
+    currentPosition[1] + '},{"lat":' + 
+    currentDoc.geometry.coordinates[0] + ',"lon":' +
+    currentDoc.geometry.coordinates[1] + '}],"costing":"pedestrian"}&api_key=' + VALHALLA_KEY;
+  // var query = 'http://router.project-osrm.org/viaroute?loc=' + currentPosition + '&loc=' + currentDoc.geometry.coordinates + '&instructions=true';
   $.ajax({url : query}).done(showRoute).fail(errorRouting);
 }
 
 function showRoute(doc) {
   console.log('<show-route>');
   console.log(doc);
-  if (doc.status == 207) { // no route found
-    errorRouting(doc.status);
+  var legs = doc.trip.legs;
+  if (typeof legs === 'undefined' || legs.length == 0) { // no route found
+    errorRouting(doc.trip.status_message);
   } else {
     routeLayer.clearLayers();
-    line = polyline.decode(doc.route_geometry, 6);
+    line = polyline.decode(legs[0].shape, 6);
     console.log(line);
     var route = L.polyline(line, {color: 'blue'}).addTo(routeLayer);
     route.dblclick = function (evt) {map.fitBounds(route.getBounds());};
@@ -632,4 +652,47 @@ function errorRouting(err) {
   console.log('<error-route>');
   console.log(err);
   alert(gettext('routeError'));
+}
+
+function initCategories() {
+  var addOpt, searchResult, filterCheck;
+  addCont = $('#add-category');
+  searchBox = $('#search-results');
+  filterList = $('#filter-list');
+  // do not initialize display names, translate() will do that anyway
+  // TODO: add category class to category display in details page
+  for (category in categories) {
+    // add place dialog
+    addOpt = '<option value="' + category + '" class="cat-' + category + '">categoryname</option>';
+    addCont.append(addOpt);
+    // into search results
+    searchResult = '<li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r cat-' + category + '" onclick="filterOnly(\'' + category + '\')">categoryname</a></li>';
+    searchBox.append(searchResult);
+    // into filtering
+    filterCheck = '<label for="filter-cat-' + category + '" class="cat-' + category + '">categoryname</label><input type="checkbox" name="' + category + '" id="filter-cat-' + category + '" value="' + category + '" checked="checked" class="cat-filter-check">';
+    filterList.append(filterCheck);
+  }
+  searchBox.append('<li data-role="list-divider" role="heading" id="placelist-header">Places</li>');
+  // filterList.checkboxradio('refresh');
+}
+
+function filter() {
+  var isChecked;
+  var filtering = false;
+  for (category in categories) {
+    isChecked = document.getElementById('filter-cat-' + category).checked;
+    categories[category].display = isChecked;
+    if (!isChecked) {
+      filtering = true;
+    }
+  }
+  // show the user that he has some of the points filtered out
+  $('.command-layer').toggleClass('command-button-down', filtering);
+  drawPOIs();
+  window.location = '#page-map';
+}
+
+function displayAll() {
+  $('.cat-filter-check').prop('checked', true);
+  filter();
 }

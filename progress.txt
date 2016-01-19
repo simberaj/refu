@@ -1,12 +1,10 @@
 TODO: Details display page - better user interface (Arda)
 TODO: Markers and display (Arda)
 TODO: Searching (Jan)
-TODO: Layer display/filtering (Jan)
 TODO: OSM querying (Overpass API) (Jan)
 TODO: OSM points local storage (Jan)
 TODO: OSM points display (Jan)
-TODO: Adding a new language? (Jan)
-TODO: Adding localized elements (Jan)
+TODO: Localizing categories (Jan)
 TODO: Localizing the user interface (Arda)
 TODO: Add more POIs (Arda)
 TODO: Interface polishing
@@ -34,3 +32,4 @@ DONE: Multilingual support
 DONE: Description adding
 DONE: Adding a new point
 DONE: Description editing
+DONE: Layer display/filtering
