@@ -350,17 +350,23 @@ function drawPOIs() {
   console.log(categories);
   localPOIDB.query('poi/allpoi', {include_docs : true, attachments : true}).then(
     function(results) {
+      var entry, props, marker, content, coors;
+      var searchBox = $('#search-results');
       poiLayer.clearLayers();
+      $('.place-search').remove();
       for (var entrynumber in results.rows) {
-        var entry = results.rows[entrynumber];
-        var cat = entry.value.properties.category;
-        if (!categories[cat] || categories[cat].display) {
-          var marker = L.marker(entry.value.geometry.coordinates).addTo(poiLayer);
-          var content = '<p class="popupname">' + entry.value.properties.name + '(' + entry.value.properties.category + ')</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value._id + '\');">...</a>';
+        entry = results.rows[entrynumber];
+        props = entry.value.properties;
+        coors = entry.value.geometry.coordinates;
+        if (!categories[props.category] || categories[props.category].display) {
+          marker = L.marker(coors).addTo(poiLayer);
+          content = '<p class="popupname">' + props.name + '(' + props.category + ')</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value._id + '\');">...</a>';
           marker.bindPopup(content);
+          var searchResult = '<li class="place-search"><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r" onclick="panTo([' + coors + ']);">' + props.name + '</a></li>';
+          searchBox.append(searchResult);
         }
-        console.log(entry.value);
-      };
+        // console.log(entry.value);
+      }
     }).catch(function (error) {
         console.log(error);
     });
@@ -692,7 +698,18 @@ function filter() {
   window.location = '#page-map';
 }
 
+function filterOnly(category) {
+  $('.cat-filter-check').prop('checked', false);
+  $('#filter-cat-' + category).prop('checked', true);
+  filter();
+}
+
 function displayAll() {
   $('.cat-filter-check').prop('checked', true);
   filter();
+}
+
+function panTo(coors) {
+  map.panTo(coors);
+  window.location = '#page-map';  
 }

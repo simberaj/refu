@@ -17,7 +17,7 @@
             <div id="map"></div>
           </div>
         </div>
-
+        
         <div data-role="page" id="page-search">
           <div data-role="header">
             <a href="#page-map" data-role="button" data-inline="true" data-icon="back">&nbsp;</a>
@@ -27,10 +27,8 @@
             <form class="ui-filterable">
               <input data-type="search" id="searchbox" placeholder="Enter text to search..." />
             </form>
-            <ul data-role="listview" id="search-results">
+            <ul data-role="listview" data-filter="true" data-input="#searchbox" id="search-results">
               <li data-role="list-divider" role="heading" id="category-header">Categories</li>
-                <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Wi-Fi</a></li>
-                <li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">Accomodation</a></li>
             </ul>
           </div>   
         </div>

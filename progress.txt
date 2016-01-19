@@ -1,6 +1,5 @@
 TODO: Details display page - better user interface (Arda)
 TODO: Markers and display (Arda)
-TODO: Searching (Jan)
 TODO: OSM querying (Overpass API) (Jan)
 TODO: OSM points local storage (Jan)
 TODO: OSM points display (Jan)
@@ -33,3 +32,4 @@ DONE: Description adding
 DONE: Adding a new point
 DONE: Description editing
 DONE: Layer display/filtering
+DONE: Searching
