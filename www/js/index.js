@@ -18,10 +18,15 @@ var storeErrorText;
 var currentDoc = "";
 var currentPosition;
 var locationIcon = L.divIcon({className: 'location-icon'});
-var tileLayer;
-var MAX_CACHE_ZOOM = 16;
 var locationLayer = L.layerGroup();
 var routeLayer = L.layerGroup();
+
+for (catcode in categories) {
+  categories[catcode]['icon'] = L.icon({iconUrl: '../images/categories_png/' + catcode + '.png',
+    iconSize:     [32, 32],
+    iconAnchor:   [10, 15], 
+  })
+}
 
 function gettext(key) {
   var trans;
@@ -190,19 +195,10 @@ function initMap() {
   console.log('<initMap>');
   map = L.map('map');
   // tiles
-  // tileLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    // maxZoom: 17,
-    // attribution: '&copy; <a href="http://osm.org">OSM contributors</a> | <a href="#page-about" id="projlink">Project Refu</a>'
-  // }).addTo(map);
-  
-  tileLayer = L.tileLayerCordova('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-      attribution: '&copy; <a href="http://osm.org">OSM contributors</a> | <a href="#page-about" id="projlink">Project Refu</a>',
-      folder: 'refuMapTiles',
-      name:   'refu',
-      debug:   false
+  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    maxZoom: 17,
+    attribution: '&copy; <a href="http://osm.org">OSM contributors</a> | <a href="#page-about" id="projlink">Project Refu</a>'
   }).addTo(map);
-  
   L.control.scale({imperial : false}).addTo(map);
   commands = L.control.commandpanel();
   commands.addTo(map);
@@ -372,7 +368,7 @@ function drawPOIs() {
         cat = categories[props.category];
         if (!cat || cat.display) {
           // marker = L.marker(coors, {icon : cat.icon}).addTo(poiLayer);
-          marker = L.marker(coors).addTo(poiLayer);
+          marker = L.marker(coors, {icon : cat.icon}).addTo(poiLayer);
           content = '<p class="popupname">' + props.name + '(' + cat.code + ')</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value._id + '\');">...</a>';
           marker.bindPopup(content);
           var searchResult = '<li class="place-search"><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r" onclick="panTo([' + coors + ']);">' + props.name + '</a></li>';
@@ -659,22 +655,8 @@ function showRoute(doc) {
     var route = L.polyline(line, {color: 'blue'}).addTo(routeLayer);
     route.dblclick = function (evt) {map.fitBounds(route.getBounds());};
     map.fitBounds(route.getBounds());
-    cacheTiles();
     window.location = '#page-map';
   }
-}
-
-function cacheTiles(recurse) {
-  if (typeof recurse === 'undefined') recurse = true;
-  // caches the tiles of the current view down to maxZoom level
-  var tileList = tileLayer.calculateXYZListFromBounds(map.getBounds(), map.getZoom(), MAX_CACHE_ZOOM);
-  tileLayer.downloadXYZList(tileList, false);
-  tileLayer.getDiskUsage(function (files, bytes) {
-    if (bytes > MAX_CACHE_SIZE) {
-      tileLayer.emptyCache();
-      cacheTiles(false);
-    }
-  });
 }
 
 function errorRouting(err) {
