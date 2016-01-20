@@ -53,29 +53,33 @@
         <!-- The details page. The link from the popup should call a function to fill in this page and then refer to it. -->
         <div data-role="page" id="page-details">
           <div data-role="header">
-            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">&nbsp;</a>
-            <h1 id="details-name">Place name</h1>
+            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">Map</a>
+            <h1 id="details-name">Details</h1>
           </div>
+		  <div class="ui-bar ui-bar-a">Category:      <span id="desc-category"></span>   </div>
           <div data-role="content">
-            <h3>Category: <span id="desc-category" class="desc-category">Place category</span></h3>
+            
             <p id="desc-description" class="desc-description">Sorry, no description in English for this place!</p>
-            <p id="desc-address"></p>
-            <p id="desc-website"></p>
-            <p id="desc-phone"></p>
+			<p id="desc-address"></p>
+				<div id="desc-website"></div>
+				<div id="desc-phone"></div>
+            <label for = "ver-disap"> Verified/Disapproved:</label>	
+			<div id="ver-disap"><span id="desc-verified">?</span>/<span id="desc-disapproved">?</span></div> 
             <form method="post">
               <fieldset class="ui-field-contain">
-                <label for="desc-lang" id="desc-label">Description language...</label>
+                <label for="desc-lang" id="desc-label">Description language:</label>
                 <select name="desc-lang" id="desc-lang" onchange="changeDescLang();">
                 </select>
               </fieldset>
             </form>
             <button onclick="addDescription();" class="ui-btn ui-icon-plus ui-btn-icon-left" id="desc-add" >Add description in English...</button>
-            <button onclick="editDescription();" class="ui-btn ui-icon-edit ui-btn-icon-left" id="desc-edit" >Edit description</button>
             <!-- <div class="ui-grid-a ui-responsive"> -->
-            <button onclick="rateCurrent(true);" class="ui-btn ui-icon-check ui-btn-icon-left" id="place-found"><span id="place-found-text">Been there</span> (<span id="desc-verified">?</span>)</button>
-            <button onclick="rateCurrent(false);" class="ui-btn ui-icon-delete ui-btn-icon-left" id="place-notfound"><span id="place-notfound-text">Been there</span> (<span id="desc-disapproved">?</span>)</button>
+			<div class="ui-grid-a">
+				  <div class="ui-block-a"><button type="button" onclick="rateCurrent(true);" data-theme="a">Been There</button></div>
+				  <div class="ui-block-b"><button type="button" onclick="rateCurrent(false);" data-theme="b">Not Found</button></div>
+			</div>
             <!-- </div> -->
-            <button onclick="routeToCurrent();" class="ui-btn ui-icon-navigation ui-btn-icon-left" id="route-button">Route to place</a>
+            <button onclick="" class="ui-btn ui-icon-navigation ui-btn-icon-left" id="route-button">Route to place</a>
           </div>        
         </div>
         
@@ -93,22 +97,28 @@
           </div>
         </div>
  
-        <div data-role="page" data-dialog="true" id="page-add">
-          <form method="post" id="post-add">
-            <div data-role="header">
-              <input type="text" name="add-placename" id="add-placename" placeholder="Add place name" />
-            </div>
+        <div data-role="page"  id="page-add">
+		 <div data-role="header">
+            <a href="#page-map" data-role="button" data-inline="true" data-icon="back">Map</a>
+            <h1> Add a new Place </h1>
+          </div> 
+          <form method="post" id="post-add">       
             <div data-role="content">
-              <fieldset class="ui-field-contain">
-                <label for="add-category">Category...</label>
+				<p></p>
+				<input type="text" name="add-placename" id="add-placename" placeholder="Add place name" />
+                <label for="add-category">Category:</label>
+				<!-- All categories will be listed -->
                 <select name="add-category" id="add-category">
+                  <option value="wifi">Wi-Fi access point</option>
+                  <option value="accomodation">Accomodation</option>
                 </select>
-                <textarea name="add-desc" id="add-desc" placeholder="Add description..." rows="8"></textarea>
+				<p></p>
+                <textarea "name="add-desc" id="add-desc" placeholder="Add description..." ></textarea>
+				<p></p>
                 <input type="text" name="address" id="add-address" placeholder="Address..."/>
                 <input type="text" name="website" id="add-website" placeholder="Website..."/>
                 <input type="text" name="phonenumber" id="add-phone" placeholder="Phone number"/>
-                <input type="email" name="email" id="add-email" placeholder="My e-mail" />
-				<p >Coordinates(Lat,Lon):<span id="coords-field"></span></p>
+                <input type="email" name="email" id="add-email" placeholder="Your e-mail address" />
 				<form>
 					<input type ="hidden" id="lat"></input>
 					<input type ="hidden" id="lng"></input>
