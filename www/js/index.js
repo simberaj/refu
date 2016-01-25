@@ -1,4 +1,5 @@
 document.addEventListener('deviceready', deviceIsReady, false);
+// TODO: register online/offline events to the tile layer
 
 var map;
 var poiLayer = L.layerGroup();
@@ -18,9 +19,13 @@ var storeErrorText;
 
 var currentDoc = "";
 var currentPosition;
+var currentAccuracy;
 var locationIcon = L.divIcon({className: 'location-icon'});
 var locationLayer = L.layerGroup();
 var routeLayer = L.layerGroup();
+var tileLayer;
+
+// Offline.options.requests = false; // does not retry requests failed while offline
 
 function gettext(key) {
   var trans;
@@ -198,6 +203,8 @@ function deviceIsReady() {
   initCategories();
   initMap();
   initOptions();
+  Offline.on('up', goOnline);
+  Offline.on('down', goOffline);
   console.log('</deviceIsReady>');
 }
 
@@ -205,23 +212,45 @@ function initMap() {
   console.log('<initMap>');
   map = L.map('map');
   // tiles
-  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    maxZoom: 17,
-    attribution: '&copy; <a href="http://osm.org">OSM contributors</a> | <a href="#page-about" id="projlink">Project Refu</a>'
+  tileLayer = L.tileLayerCordova('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; <a href="http://osm.org">OSM contributors</a> | <a href="#page-about" id="projlink">Project Refu</a>',
+    folder: 'refuMapTiles',
+    name:   'refu',
+    debug:   false
   }).addTo(map);
   L.control.scale({imperial : false}).addTo(map);
   commands = L.control.commandpanel();
   commands.addTo(map);
-  // map.addControl(new controlPanel());
   // locate the device
-  map.locate({setView: true, maxZoom: 16});
   initWatchLocation();
   // add the POIs
   poiLayer.addTo(map);
   drawPOIs();
   routeLayer.addTo(map);
   $('#map').on('taphold', gotoAddPage);
+  map.locate({setView: true, maxZoom: 14});
+  setTimeout(initLocation, 2000);
   console.log('</initMap>');
+}
+
+function initLocation() {
+  localPOIDB.get('_local/config').then(function (doc) {
+    console.log(currentPosition);
+    if (typeof currentPosition === 'undefined') {
+      console.log('<loc-fromconf>');
+      currentPosition = doc.lastPosition;
+      currentAccuracy = doc.lastAccuracy;
+      console.log(currentPosition);
+      console.log(currentAccuracy);
+      gotoLocation(14);
+    } else {
+      console.log('<loc-toconf>');
+      doc.lastPosition = currentPosition;
+      doc.lastAccuracy = currentAccuracy;
+      localPOIDB.put(doc);
+    }
+  });
 }
 
 function initOptions() {
@@ -233,6 +262,7 @@ function initOptions() {
     langSelect.add(langopt);
   }
   localPOIDB.get('_local/config').then(function (doc) {
+    console.log('<config-get>');
     $('#user-email').val(doc.email);
     language = doc.language;
     confRev = doc._rev;
@@ -244,9 +274,10 @@ function initOptions() {
   // object.onchange = languageChanged;
 }
 
-function gotoLocation() {
+function gotoLocation(zoom) {
+  if (typeof zoom === 'undefined') zoom = map.getZoom();
   console.log('<gotoloc ' + currentPosition + '>');
-  map.panTo(currentPosition); // cannot use locate because custom watchLocation is on
+  map.setView(currentPosition, zoom); // cannot use locate because custom watchLocation is on
 }
 
 function initWatchLocation() {
@@ -673,6 +704,7 @@ function showRoute(doc) {
     var route = L.polyline(line, {color: 'blue'}).addTo(routeLayer);
     route.dblclick = function (evt) {map.fitBounds(route.getBounds());};
     map.fitBounds(route.getBounds());
+    cacheTiles();
     window.location = '#page-map';
   }
 }
@@ -750,4 +782,27 @@ function displayAll() {
 function panTo(coors) {
   map.panTo(coors);
   window.location = '#page-map';  
+}
+
+function goOnline() {
+  if (tileLayer.isOffline())
+    tileLayer.goOnline();
+}
+
+function goOffline() {
+  if (tileLayer.isOnline())
+    tileLayer.goOffline();
+}
+
+function cacheTiles(recurse) {
+  if (typeof recurse === 'undefined') recurse = true;
+  // caches the tiles of the current view down to maxZoom level
+  var tileList = tileLayer.calculateXYZListFromBounds(map.getBounds(), map.getZoom(), MAX_CACHE_ZOOM);
+  tileLayer.downloadXYZList(tileList, false);
+  tileLayer.getDiskUsage(function (files, bytes) {
+    if (bytes > MAX_CACHE_SIZE) {
+      tileLayer.emptyCache();
+      cacheTiles(false);
+    }
+  });
 }
