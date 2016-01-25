@@ -23,7 +23,10 @@ p.popupname {font-weight: bold; margin:0;}
 .smaller {font-size: 100%;}
 a.morelink, a.morelink:visited {text-decoration: none; color: #ccc; font-size:20px; line-height:15px;}
 a.morelink:hover {color: #888;}
-/* div.inpopup {width: 26px; height: 26px; float: left; text-align: center; text-decoration: none;}
+#category-subheader-bar {text-align: center;}
+.cat-img-small {height: 16px; width: 16px;}
+/* #category-image {height: 32px; width: 32px; background-color: #fff; display:inline;}
+ *//* div.inpopup {width: 26px; height: 26px; float: left; text-align: center; text-decoration: none;}
 div.popup-details {background-image: url("images/icons-png/action-black.png") no-repeat;}
 div.popup-close {background-image: url("images/icons-png/delete-black.png") no-repeat;}
 div.popup-close a {line-height:26px;}

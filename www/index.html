@@ -56,7 +56,7 @@
           <a href="#page-map" data-role="button" data-inline="true" data-icon="back">&nbsp;</a>
           <h1 id="details-name">Details</h1>
         </div>
-        <div class="ui-bar ui-bar-a">Category:<span id="desc-category"></span></div>
+        <div class="ui-bar ui-bar-a" id="category-subheader-bar"><span id="category-subheader">Category</span>: <span id="desc-category"></span> <img src="" alt="catimg" id="desc-cat-img" class="cat-img-small" /></div>
         <div data-role="content">
           <p id="desc-description" class="desc-description">Sorry, no description in English for this place!</p>
           <p id="desc-address"></p>
@@ -100,13 +100,13 @@
       <div data-role="page"  id="page-add">
         <div data-role="header">
           <a href="#page-map" data-role="button" data-inline="true" data-icon="back">&nbsp;</a>
-          <h1>Add a new Place</h1>
+          <h1 id="add-header">Add a new Place</h1>
         </div> 
         <form method="post" id="post-add">       
           <div data-role="content">
             <p></p>
             <input type="text" name="add-placename" id="add-placename" placeholder="Add place name" />
-            <label for="add-category">Category:</label>
+            <label for="add-category"><span id="add-category-label">Category</span>:</label>
             <select name="add-category" id="add-category"></select>
             <p></p>
             <textarea name="add-desc" id="add-desc" placeholder="Add description..." ></textarea>
@@ -148,11 +148,16 @@
 
       <div data-role="page" id="page-about">
         <div data-role="header">
-          <a href="#page-options" data-role="button" data-inline="true" data-icon="back">Options</a>
+          <a href="#page-options" data-role="button" data-inline="true" data-icon="back" id="back-to-options">Options</a>
           <h1 id="about-header">About</h1>
         </div>
         <div data-role="content">
-          <p>Something about the origin of the application, its developers and so on.</p>
+          <p>This Refu App is a part of the project Refugees and the City undertaken at the Technical University of Vienna in 2015/2016.</p>
+          <p>Developers:</p>
+          <ul>
+            <li>Jan Šimbera, Czechia</li>
+            <li>Arda Can Uyanık, Turkey</li>
+          </ul>
         </div>        
       </div>
       
@@ -175,6 +180,7 @@
       <script type="text/javascript" src="js/leaflet-tilelayer-cordova.js"></script>
       <script type="text/javascript" src="js/polyline.js"></script>
       <script type="text/javascript" src="js/translation.js"></script>
+      <script type="text/javascript" src="js/offline.min.js"></script>
       <script type="text/javascript" src="js/index.js"></script>
     </body>
 </html>

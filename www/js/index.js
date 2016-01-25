@@ -10,6 +10,7 @@ var addMode = false;
 
 var language;
 language = "en";
+var confRev;
 // alert('index loaded');
 
 var noDescReport;
@@ -20,13 +21,6 @@ var currentPosition;
 var locationIcon = L.divIcon({className: 'location-icon'});
 var locationLayer = L.layerGroup();
 var routeLayer = L.layerGroup();
-
-for (catcode in categories) {
-  categories[catcode]['icon'] = L.icon({iconUrl: '../images/categories_png/' + catcode + '.png',
-    iconSize:     [32, 32],
-    iconAnchor:   [10, 15], 
-  })
-}
 
 function gettext(key) {
   var trans;
@@ -44,7 +38,7 @@ function gettextFormatted(key, lang) {
 }
 
 var translateMap = {
-  "inner" : {
+  "text" : {
     "langopt" : "language",
     "projlink" : "projectName",
     "search-header" : "search",
@@ -63,31 +57,48 @@ var translateMap = {
     "filter-header" : "chooseFilter",
     "contact-form" : "sendMessagePrompt",
     "user-email-label" : "email",
-    "user-lang-label" : "language"
+    "user-lang-label" : "language",
+    "submit-desc" : "submit",
+    "filter-disp-all" : "displayAll",
+    "back-to-options" : "options",
+    "add-header" : "addNewPlace",
+    "add-category-label" : "category",
+    "category-subheader" : "category"
+  },
+  "placeholder" : {
+    "searchbox" : "searchPrompt",
+    "add-placename" : "placeName",
+    "add-desc" : "description",
+    "add-address" : "address",
+    "add-website" : "website",
+    "add-phone" : "phoneNumber",
+    "add-email" : "email"
   }
 } 
 
 function saveOptions() {
-  language = document.getElementById('user-lang').value;
+  language = $('#user-lang').val();
   console.log('<change-language: ' + language + '>');
   translate();
   window.location = '#page-map';
+  newConf = {'_id' : '_local/config', '_rev' : confRev, 'email' : $('#user-email').val(), 'language' : language};
+  localPOIDB.put(newConf);
 }
 
 function translate() {
   console.log('<translate: ' + language + '>');
-  var innerTrans = translateMap["inner"];
+  var innerTrans = translateMap["text"];
+  var placeholderTrans = translateMap["placeholder"];
   var elem;
   for (key in innerTrans) {
-    // console.log(key);
     $('#' + key).text(gettext(innerTrans[key]));
-    // elem = document.getElementById(key);
-    // if (elem)
-      // elem.innerHTML = gettext(innerTrans[key]);
   }
-  $('#searchbox').attr('placeholder', gettext('searchPrompt')); // TODO
-  // TODO: add images to these (categories, places in search page)...
-  // TODO: image to use for return-to-map
+  for (key in placeholderTrans) {
+    $('#' + key).attr('placeholder', gettext(placeholderTrans[key]) + '...');
+  }
+  $('.leaflet-control-zoom-in').attr('title', gettext('zoomIn'));
+  $('.leaflet-control-zoom-out').attr('title', gettext('zoomOut'));
+  $('#submit-desc').val(gettext('submit'));
   // reports within the script
   noDescReport = gettext('noDescriptionReport');
   storeErrorText = gettext('storeError');
@@ -187,7 +198,6 @@ function deviceIsReady() {
   initCategories();
   initMap();
   initOptions();
-  translate();
   console.log('</deviceIsReady>');
 }
 
@@ -222,6 +232,15 @@ function initOptions() {
     langopt.innerHTML = translation[lang][lang];
     langSelect.add(langopt);
   }
+  localPOIDB.get('_local/config').then(function (doc) {
+    $('#user-email').val(doc.email);
+    language = doc.language;
+    confRev = doc._rev;
+    $('#user-lang').val(language);
+    translate();
+  }).catch(function (err) {
+    console.log(err);
+  });
   // object.onchange = languageChanged;
 }
 
@@ -369,9 +388,9 @@ function drawPOIs() {
         if (!cat || cat.display) {
           // marker = L.marker(coors, {icon : cat.icon}).addTo(poiLayer);
           marker = L.marker(coors, {icon : cat.icon}).addTo(poiLayer);
-          content = '<p class="popupname">' + props.name + '(' + cat.code + ')</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value._id + '\');">...</a>';
+          content = '<p class="popupname">' + props.name + '</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value._id + '\');">...</a>';
           marker.bindPopup(content);
-          var searchResult = '<li class="place-search"><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r" onclick="panTo([' + coors + ']);">' + props.name + '</a></li>';
+          var searchResult = '<li class="place-search"><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r" onclick="panTo([' + coors + ']);"><span>' + categoryImage(props.category) + '&nbsp;&nbsp;' + props.name + '</span></a></li>';
           searchBox.append(searchResult);
         }
         // console.log(entry.value);
@@ -389,12 +408,13 @@ function showDetails(id){
     currentDoc = doc;
     var props = doc.properties;
     $('#details-name').text(props.name);
-    $('#desc-category').text(props.category);
+    $('#desc-category').text(gettext('cat:' + props.category));
     $('#desc-phone').text(props.telephone);
     $('#desc-address').text(props.address);
     $('#desc-website').text(props.website);
+    $('#desc-cat-img').attr('src', categoryImagePath(props.category));
     initDescription(props);
-    updateRating(doc.properties);
+    updateRating(props);
 	}).catch(function(err){console.log(err);});
 }
 
@@ -455,7 +475,6 @@ function getAvailableDescriptionLanguages(props) {
 
 function showDescription(lang) {
   var curDesc = currentDoc.properties["desc:" + lang];
-  console.log(curDesc);
   if (curDesc) {
     $('#desc-add').hide();
     $('#desc-edit').text(gettextFormatted('descEditPrompt', lang));
@@ -485,14 +504,13 @@ function updateRating(props) {
 }
 
 function gotoAddPage(evt){
-  // TODO: this saves a string, not the list - must be modified
-    $('#add-placename').val('');
-    $('#add-category').val('');
-    $('#add-address').val('');
-    $('#add-phone').val('');
-    $('#add-website').val('');
+  $('#add-placename').val('');
+  $('#add-category').val('');
+  $('#add-address').val('');
+  $('#add-phone').val('');
+  $('#add-website').val('');
 	$('#add-desc').val('');
-	$('#coords-field').text([evt.latlng.lat, evt.latlng.lng]);
+	// $('#coords-field').text([evt.latlng.lat, evt.latlng.lng]);
 	$('#lat').val(evt.latlng.lat);
 	$('#lng').val(evt.latlng.lng);
 	
@@ -666,26 +684,37 @@ function errorRouting(err) {
 }
 
 function initCategories() {
-  var addOpt, searchResult, filterCheck;
+  var addOpt, searchResult, filterCheck, catImg;
   addCont = $('#add-category');
   searchBox = $('#search-results');
   filterList = $('#filter-list');
   // do not initialize display names, translate() will do that anyway
-  // TODO: add category class to category display in details page
   for (category in categories) {
+    catImg = categoryImage(category);
     // add place dialog
     addOpt = '<option value="' + category + '" class="cat-' + category + '">categoryname</option>';
     addCont.append(addOpt);
     // into search results
-    searchResult = '<li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r cat-' + category + '" onclick="filterOnly(\'' + category + '\')">categoryname</a></li>';
+    searchResult = '<li><a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r" onclick="filterOnly(\'' + category + '\')"><span>' + catImg + '&nbsp;&nbsp;<span class="cat-' + category + '">categoryname</span></span></a></li>';
     searchBox.append(searchResult);
     // into filtering
-    filterCheck = '<label for="filter-cat-' + category + '" class="cat-' + category + '">categoryname</label><input type="checkbox" name="' + category + '" id="filter-cat-' + category + '" value="' + category + '" checked="checked" class="cat-filter-check">';
+    filterCheck = '<label for="filter-cat-' + category + '"><span>' + catImg + '&nbsp;&nbsp;<span class="cat-' + category + '">categoryname</span></span></label><input type="checkbox" name="' + category + '" id="filter-cat-' + category + '" value="' + category + '" checked="checked" class="cat-filter-check">';
     filterList.append(filterCheck);
-    // categories[category].icon = L.divIcon({className: 'icon-' + category});
+    categories[category]['icon'] = L.icon({iconUrl: categoryImagePath(category),
+      iconSize:     [32, 32],
+      iconAnchor:   [16, 16], 
+    })
   }
   searchBox.append('<li data-role="list-divider" role="heading" id="placelist-header">Places</li>');
   // filterList.checkboxradio('refresh');
+}
+
+function categoryImage(category) {
+  return '<img class="cat-img-small" src="../images/categories_png/' + category + '.png" alt="" />';
+}
+
+function categoryImagePath(category) {
+  return '../images/categories_png/' + category + '.png';
 }
 
 function filter() {
@@ -712,6 +741,9 @@ function filterOnly(category) {
 
 function displayAll() {
   $('.cat-filter-check').prop('checked', true);
+  var unchecked = $('#filter-list .ui-checkbox-off');
+  unchecked.toggleClass('ui-checkbox-on', true);
+  unchecked.toggleClass('ui-checkbox-off', false);
   filter();
 }
 
