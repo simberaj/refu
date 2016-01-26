@@ -1,11 +1,11 @@
 
-var remotePOIDB = new PouchDB('http://gi88.geoinfo.tuwien.ac.at:5984/refu_final');
-var localPOIDB = new PouchDB('den3');
+var remotePOIDB = new PouchDB('http://gi88.geoinfo.tuwien.ac.at:5984/refu_farsitest');
+var localPOIDB = new PouchDB('den11');
 var category = [internet,basic,work,transport,free,education,health,extra,legal]								
 function cat(){
 	for(var i = 0; i < category.length; i++){
 		var cat = category[i];
-document.write(cat)}}
+console.log(i)(cat)}}
 
 function initsync() {
   var options = {live: true, retry: true};
@@ -41,15 +41,16 @@ function basic_(){
 	"coordinates" : [basic[i].geometry.coordinates[1], basic[i].geometry.coordinates[0]]
 	
 	},  
-	"properties_"	:					{
+	"properties:"	:					{
 			"name" 	:            	basic[i].properties.name,
-			"category" :         	"Basic",
+			"category" :         	"basic",
 			"address" :           	null,
 			"verified" :          	[],
 			"disapproved" :        	[],
 			"website" :           	basic[i].properties.Kontakt,
 			"desc:en":			 	basic[i].properties.Description,
-			"desc:de": 				basic[i].properties.Beschreibung,	
+			"desc:de": 				basic[i].properties.Beschreibung,
+			"desc:fa":				basic[i].properties.اطلاعات,			
 			"telephone" :         	null,
 			"creator" :            	"ardacanuyanik@gmail.com"
 		}
@@ -70,15 +71,16 @@ function sport_(){
 	"coordinates" : [sport[i].geometry.coordinates[1], sport[i].geometry.coordinates[0]]
 	
 	},  
-	"properties_"	:					{
+	"properties"	:					{
 			"name" 	:            	sport[i].properties.name,
-			"category" :         	"Sport",
+			"category" :         	"sport",
 			"address" :           	null,
 			"verified" :          	[],
 			"disapproved" :        	[],
 			"website" :           	sport[i].properties.Kontakt,
 			"desc:en":			 	sport[i].properties.Description,
-			"desc:de": 				sport[i].properties.Beschreibung,	
+			"desc:de": 				sport[i].properties.Beschreibung,
+			"desc:fa":				sport[i].properties.اطلاعات,
 			"telephone" :         	null,
 			"creator" :            	"ardacanuyanik@gmail.com"
 		}
@@ -99,15 +101,16 @@ function culture_(){
 	"coordinates" : [culture[i].geometry.coordinates[1], culture[i].geometry.coordinates[0]]
 	
 	},  
-	"properties_"	:					{
+	"properties"	:					{
 			"name" 	:            	culture[i].properties.name,
-			"category" :         	"Culture",
+			"category" :         	"culture",
 			"address" :           	null,
 			"verified" :          	[],
 			"disapproved" :        	[],
 			"website" :           	culture[i].properties.Kontakt,
 			"desc:en":			 	culture[i].properties.Description,
 			"desc:de": 				culture[i].properties.Beschreibung,	
+			"desc:fa":				culture[i].properties.اطلاعات,
 			"telephone" :         	null,
 			"creator" :            	"ardacanuyanik@gmail.com"
 		}
@@ -129,15 +132,16 @@ function work_(){
 	"coordinates" : [work[i].geometry.coordinates[1], work[i].geometry.coordinates[0]]
 	
 	},  
-	"properties_"	:					{
+	"properties"	:					{
 			"name" 	:            	work[i].properties.name,
-			"category" :         	"Work",
+			"category" :         	"work",
 			"address" :           	null,
 			"verified" :          	[],
 			"disapproved" :        	[],
 			"website" :           	work[i].properties.Kontakt,
 			"desc:en":			 	work[i].properties.Description,
 			"desc:de": 				work[i].properties.Beschreibung,	
+			"desc:fa":				work[i].properties.اطلاعات,
 			"telephone" :         	null,
 			"creator" :            	"ardacanuyanik@gmail.com"
 		}
@@ -158,15 +162,16 @@ function extra_(){
 	"coordinates" : [extra[i].geometry.coordinates[1], extra[i].geometry.coordinates[0]]
 	
 	},  
-	"properties_"	:					{
+	"properties"	:					{
 			"name" 	:            	extra[i].properties.name,
-			"category" :         	"Extra",
+			"category" :         	"extra",
 			"address" :           	null,
 			"verified" :          	[],
 			"disapproved" :        	[],
 			"website" :           	extra[i].properties.Kontakt,
 			"desc:en":			 	extra[i].properties.Description,
-			"desc:de": 				extra[i].properties.Beschreibung,	
+			"desc:de": 				extra[i].properties.Beschreibung,
+			"desc:fa":				extra[i].properties.اطلاعات,			
 			"telephone" :         	null,
 			"creator" :            	"ardacanuyanik@gmail.com"
 		}
@@ -195,6 +200,7 @@ function intern(){
 			"address":				internet[i].properties.Adresse,
 			"desc:en":			 	internet[i].properties.Description,
 			"desc:de": 				internet[i].properties.Beschreibung,	
+			"desc:fa":				internet[i].properties.اطلاعات,
 			"telephone" :         	internet[i].properties.Telefon,
 			"website" :           	[internet[i].properties.Website,internet[i].properties.Facebook],
 			"verified" :          	[],
@@ -203,7 +209,7 @@ function intern(){
 		}
 		
 		}
-	document.write(doc.properties.name);
+	console.log(i);
 	localPOIDB.put(doc).catch(errorStoring);
 		}
 };
@@ -221,10 +227,11 @@ function health_(){
 	},  
 	"properties"	:					{
 			"name" 	:            	health[i].properties.name,
-			"category" :         	"Health",
+			"category" :         	"health",
 			"address":				health[i].properties.Adresse,
 			"desc:en":			 	health[i].properties.Description,
 			"desc:de": 				health[i].properties.Beschreibung,	
+			"desc:fa":				health[i].properties.اطلاعات,
 			"telephone" :         	health[i].properties.Telefon,
 			"website" :           	[health[i].properties.Website,health[i].properties.Facebook],
 			"verified" :          	[],
@@ -233,7 +240,7 @@ function health_(){
 		}
 		
 		}
-	document.write(doc.properties.name);
+	console.log(i);
 	localPOIDB.put(doc).catch(errorStoring);
 		}
 };
@@ -251,10 +258,11 @@ function legal_(){
 	},  
 	"properties"	:					{
 			"name" 	:            	legal[i].properties.name,
-			"category" :         	"Legal",
+			"category" :         	"legal",
 			"address":				legal[i].properties.Adresse,
 			"desc:en":			 	legal[i].properties.Description,
 			"desc:de": 				legal[i].properties.Beschreibung,	
+			"desc:fa":				legal[i].properties.اطلاعات,
 			"telephone" :         	legal[i].properties.Telefon,
 			"website" :           	[legal[i].properties.Website,legal[i].properties.Facebook],
 			"verified" :          	[],
@@ -263,7 +271,7 @@ function legal_(){
 		}
 		
 		}
-	document.write(doc.properties.name);
+	console.log(i);
 	localPOIDB.put(doc).catch(errorStoring);
 		}
 };
@@ -282,10 +290,11 @@ function transport_(){
 	},  
 	"properties"	:					{
 			"name" 	:            	transport[i].properties.name,
-			"category" :         	"Transport",
+			"category" :         	"transport",
 			"address":				transport[i].properties.Adresse,
 			"desc:en":			 	transport[i].properties.Description,
-			"desc:de": 				transport[i].properties.Beschreibung,	
+			"desc:de": 				transport[i].properties.Beschreibung,
+			"desc:fa":				transport[i].properties.اطلاعات,			
 			"telephone" :         	transport[i].properties.Telefon,
 			"website" :           	[transport[i].properties.Website,transport[i].properties.Facebook],
 			"verified" :          	[],
@@ -294,7 +303,7 @@ function transport_(){
 		}
 		
 		}
-	document.write(doc.properties.name);
+	console.log(i);
 	localPOIDB.put(doc).catch(errorStoring);
 		}
 };
@@ -310,10 +319,11 @@ function education_(){
 	},  
 	"properties"	:					{
 			"name" 	:            	education[i].properties.name,
-			"category" :         	"Education",
+			"category" :         	"education",
 			"address":				education[i].properties.Adresse,
 			"desc:en":			 	education[i].properties.Description,
-			"desc:de": 				education[i].properties.Beschreibung,	
+			"desc:de": 				education[i].properties.Beschreibung,
+			"desc:fa":				education[i].properties.اطلاعات,
 			"telephone" :         	education[i].properties.Telefon,
 			"website" :           	[education[i].properties.Website,education[i].properties.Facebook],
 			"verified" :          	[],
@@ -339,10 +349,11 @@ function free_(){
 	},  
 	"properties"	:					{
 			"name" 	:            	free[i].properties.name,
-			"category" :         	"Free",
+			"category" :         	"free",
 			"address":				free[i].properties.Adresse,
 			"desc:en":			 	free[i].properties.Description,
-			"desc:de": 				free[i].properties.Beschreibung,	
+			"desc:de": 				free[i].properties.Beschreibung,
+			"desc:fa":				free[i].properties.اطلاعات,
 			"telephone" :         	free[i].properties.Telefon,
 			"website" :           	[free[i].properties.Website,free[i].properties.Facebook],
 			"verified" :          	[],
@@ -384,7 +395,7 @@ function jsontocouch(){
 			}
 			
 			}
-		document.write(cat[i]);
+		console.log(i)(cat[i]);
 		//localPOIDB.put(doc).catch(errorStoring);
 			};
 	}
