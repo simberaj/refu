@@ -5,7 +5,7 @@ var map;
 var poiLayer = L.layerGroup();
 var remotePOIDB;
 var localPOIDB;
-var REMOTE_DB_ADDR = 'http://gi88.geoinfo.tuwien.ac.at:5984/refu_farsitest';
+var REMOTE_DB_ADDR = 'http://gi88.geoinfo.tuwien.ac.at:5984/refu';
 var VALHALLA_KEY = 'valhalla-glGvZII';
 var addMode = false;
 
@@ -206,7 +206,7 @@ function deviceIsReady() {
   console.log('<deviceIsReady>');
   $('#add-mode-off').hide();
   remotePOIDB = new PouchDB(REMOTE_DB_ADDR);
-  localPOIDB = new PouchDB('refupoi');
+  localPOIDB = new PouchDB('refupts');
   initSync();
   initCategories();
   initMap();
@@ -423,9 +423,11 @@ function drawPOIs() {
       for (var entrynumber in results.rows) {
         entry = results.rows[entrynumber];
         props = entry.value.properties;
+        if (!entry.value.geometry) continue;
         coors = entry.value.geometry.coordinates;
         if (!props) continue;
         props.category = props.category.toLowerCase();
+        if (props.category == 'basic') console.log(props);
         cat = categories[props.category];
         // console.log('displaying ' + props.name);
         if (cat && cat.display) {
