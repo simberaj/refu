@@ -835,6 +835,9 @@ function displayAll() {
 
 function panTo(coors) {
   map.panTo(coors);
+  if (map.getZoom() < 16) {
+    map.setZoom(16);
+  }
   window.location = '#page-map';  
 }
 
