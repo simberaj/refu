@@ -5,7 +5,7 @@ var map;
 var poiLayer = L.layerGroup();
 var remotePOIDB;
 var localPOIDB;
-var REMOTE_DB_ADDR = 'http://gi88.geoinfo.tuwien.ac.at:5984/refu_2';
+var REMOTE_DB_ADDR = 'http://gi88.geoinfo.tuwien.ac.at:5984/refu_farsitest';
 var VALHALLA_KEY = 'valhalla-glGvZII';
 var addMode = false;
 
@@ -86,8 +86,16 @@ function saveOptions() {
   console.log('<change-language: ' + language + '>');
   translate();
   window.location = '#page-map';
-  newConf = {'_id' : '_local/config', '_rev' : confRev, 'email' : $('#user-email').val(), 'language' : language};
-  localPOIDB.put(newConf);
+  var newConf = {'_id' : '_local/config', '_rev' : confRev, 'email' : $('#user-email').val(), 'language' : language};
+  localPOIDB.put(newConf).then(function (doc) {
+    confRev = doc.rev;
+  }).catch(function (err) {
+    currentConf = localPOIDB.get('_local/config');
+    if (currentConf._rev != confRev) {
+      confRev = currentConf._rev;
+      saveOptions();
+    }
+  });
 }
 
 function translate() {
@@ -198,7 +206,7 @@ function deviceIsReady() {
   console.log('<deviceIsReady>');
   $('#add-mode-off').hide();
   remotePOIDB = new PouchDB(REMOTE_DB_ADDR);
-  localPOIDB = new PouchDB('mappoint');
+  localPOIDB = new PouchDB('refupoi');
   initSync();
   initCategories();
   initMap();
@@ -229,7 +237,7 @@ function initMap() {
   drawPOIs();
   routeLayer.addTo(map);
   $('#map').on('taphold', gotoAddPage);
-  map.locate({setView: true, maxZoom: 14});
+  map.locate({setView: true, maxZoom: 15});
   setTimeout(initLocation, 2000);
   console.log('</initMap>');
 }
@@ -243,7 +251,7 @@ function initLocation() {
       currentAccuracy = doc.lastAccuracy;
       console.log(currentPosition);
       console.log(currentAccuracy);
-      gotoLocation(14);
+      gotoLocation(15);
     } else {
       console.log('<loc-toconf>');
       doc.lastPosition = currentPosition;
@@ -275,8 +283,8 @@ function initOptions() {
 }
 
 function gotoLocation(zoom) {
-  if (typeof zoom === 'undefined') zoom = map.getZoom();
-  console.log('<gotoloc ' + currentPosition + '>');
+  if (!$.isNumeric(zoom)) zoom = map.getZoom();
+  console.log('<gotoloc ' + currentPosition + zoom + '>');
   map.setView(currentPosition, zoom); // cannot use locate because custom watchLocation is on
 }
 
@@ -405,18 +413,22 @@ function errorStoring(err) {
 
 function drawPOIs() {
   console.log(categories);
-  localPOIDB.query('poi/allpoi', {include_docs : true, attachments : true}).then(
+  localPOIDB.query('poi/allpoi').then(
     function(results) {
       var entry, props, marker, content, coors, cat;
       var searchBox = $('#search-results');
       poiLayer.clearLayers();
       $('.place-search').remove();
+      console.log(results.rows.length);
       for (var entrynumber in results.rows) {
         entry = results.rows[entrynumber];
         props = entry.value.properties;
         coors = entry.value.geometry.coordinates;
+        if (!props) continue;
+        props.category = props.category.toLowerCase();
         cat = categories[props.category];
-        if (!cat || cat.display) {
+        // console.log('displaying ' + props.name);
+        if (cat && cat.display) {
           // marker = L.marker(coors, {icon : cat.icon}).addTo(poiLayer);
           marker = L.marker(coors, {icon : cat.icon}).addTo(poiLayer);
           content = '<p class="popupname">' + props.name + '</p><a class="morelink" href="#" onclick="showDetails(\'' + entry.value._id + '\');">...</a>';
@@ -435,19 +447,50 @@ function showDetails(id){
   map.closePopup();
   window.location = '#page-details';
   localPOIDB.get(id).then(function(doc){
+    var websites;
     console.log('<show-details name=' + doc.properties.name + '>');
+    doc.properties.category = doc.properties.category.toLowerCase();
     currentDoc = doc;
     var props = doc.properties;
     $('#details-name').text(props.name);
+    console.log(props);
     $('#desc-category').text(gettext('cat:' + props.category));
-    $('#desc-phone').text(props.telephone);
-    $('#desc-address').text(props.address);
-    $('#desc-website').text(props.website);
+    if (props.telephone) $('#desc-phone').text(props.telephone);
+    if (props.address) $('#desc-address').text(props.address);
+    if (props.website) {
+      websites = parseWebsites(props.website);
+      $('#desc-website').html(websites.join('<br />'));
+    }
     $('#desc-cat-img').attr('src', categoryImagePath(props.category));
     initDescription(props);
     updateRating(props);
 	}).catch(function(err){console.log(err);});
 }
+
+function parseWebsites(input) {
+  var chunks = [];
+  var websites = [];
+  if (input instanceof Array) {
+    for (var i = 0; i < input.length; i++) {
+      if (input[i]) {
+        chunks.push(input[i].split('\n'));
+      }
+    }
+  } else {
+    chunks.push(input.split('\n'));
+  }
+  for (var i = 0; i < chunks.length; i++) {
+    for (var j = 0; j < chunks[i].length; j++) {
+      websites.push(chunks[i][j]);
+    }
+  }
+  console.log(websites);
+  for (var i = 0; i < websites.length; i++) {
+    websites[i] = '<a href="' + websites[i] + '">' + websites[i] + '</a>';
+  }
+  return websites;
+}
+  
 
 function initDescription(props) {
   // offer alternatives
@@ -526,11 +569,17 @@ function updateRating(props) {
   $('#desc-disapproved').text(props.disapproved.length);
   var userEmail = $("#user-email").val();
   // disable rating if user has already rated
+  console.log(props.verified);
+  console.log(props.disapproved);
   if (userEmail) {
     if (props.verified.indexOf(userEmail) != -1)
       $('#place-found').attr("disabled", "disabled");
+    else
+      $('#place-found').removeAttr("disabled");
     if (props.disapproved.indexOf(userEmail) != -1)
       $('#place-notfound').attr("disabled", "disabled");
+    else
+      $('#place-notfound').removeAttr("disabled");
   }
 }
 
@@ -557,26 +606,31 @@ function gotoAddPage(evt){
 }
 
 function addPlace(evt){
-	var lat = $("#lat").val();
-	var lng = $("#lng").val();
-	var latf = parseFloat(lat);
-	var lngf = parseFloat(lng);
-	var coor = [latf, lngf];
 	var email = $("#add-email").val();
-	var properties = {
-			"name" :               $("#add-placename").val(),
-			"category" :           $("#add-category").val(),
-			"address" :            $("#add-address").val(),
-			"verified" :           [email],
-			"disapproved" :        [],
-			"website" :            $("#add-website").val(),
-			"telephone" :          $("#add-phone").val(),
-      "creator" :            email
-	};
-  // outside because js seemingly does not allow expressions in keys
-  properties["desc:" + language] = $("#add-desc").val();
-  newDBEntry(coor, properties);
-  addModeOff();
+  if (email) {
+    var lat = $("#lat").val();
+    var lng = $("#lng").val();
+    var latf = parseFloat(lat);
+    var lngf = parseFloat(lng);
+    var coor = [latf, lngf];
+    var properties = {
+        "name" :               $("#add-placename").val(),
+        "category" :           $("#add-category").val(),
+        "address" :            $("#add-address").val(),
+        "verified" :           [email],
+        "disapproved" :        [],
+        "website" :            $("#add-website").val(),
+        "telephone" :          $("#add-phone").val(),
+        "creator" :            email
+    };
+    // outside because js seemingly does not allow expressions in keys
+    properties["desc:" + language] = $("#add-desc").val();
+    newDBEntry(coor, properties);
+    addModeOff();
+  } else {
+    window.location ='#page-add';
+    alert(gettext('noEditingWithoutEmail'));
+  }
 }
 
 function addDescription() {
@@ -689,6 +743,7 @@ function routeToCurrent() {
     currentDoc.geometry.coordinates[1] + '}],"costing":"pedestrian"}&api_key=' + VALHALLA_KEY;
   // var query = 'http://router.project-osrm.org/viaroute?loc=' + currentPosition + '&loc=' + currentDoc.geometry.coordinates + '&instructions=true';
   $.ajax({url : query}).done(showRoute).fail(errorRouting);
+  window.location = '#page-map';
 }
 
 function showRoute(doc) {
@@ -705,7 +760,6 @@ function showRoute(doc) {
     route.dblclick = function (evt) {map.fitBounds(route.getBounds());};
     map.fitBounds(route.getBounds());
     cacheTiles();
-    window.location = '#page-map';
   }
 }
 
@@ -733,8 +787,8 @@ function initCategories() {
     filterCheck = '<label for="filter-cat-' + category + '"><span>' + catImg + '&nbsp;&nbsp;<span class="cat-' + category + '">categoryname</span></span></label><input type="checkbox" name="' + category + '" id="filter-cat-' + category + '" value="' + category + '" checked="checked" class="cat-filter-check">';
     filterList.append(filterCheck);
     categories[category]['icon'] = L.icon({iconUrl: categoryImagePath(category),
-      iconSize:     [32, 32],
-      iconAnchor:   [16, 16], 
+      iconSize:     [24, 24],
+      iconAnchor:   [12, 12], 
     })
   }
   searchBox.append('<li data-role="list-divider" role="heading" id="placelist-header">Places</li>');
