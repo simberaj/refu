@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<script type="text/javascript" src="js/poi.js"></script>
+        <script type="text/javascript" src="js/pouchdb-5.1.0.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+        <meta charset="utf8">
+        
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <title>Refugee Map</title>
+    </head>
+    <body>
+	<li>Basic page for pushing json to couch-pouchdb </li>
+      <button id="sync" onclick="initsync();">sync</button>
+	  <button id="basicservices" onclick="basic_();">basic</button>
+	  <button id ="intern" onclick="intern();"> intern </button>
+	  <button id ="health_" onclick="health_();"> health </button>	
+	  <button id ="legal_" onclick="legal_();"> legal </button>
+	  <button id ="transport_" onclick="transport_();"> transport </button>	
+	  <button id ="education_" onclick="education_();"> education</button>			  
+	  <button id ="free_" onclick="free_();"> free </button>
+	  <button id ="extra_" onclick="extra_();"> extra </button>
+	  <button id ="sport_" onclick="sport_();"> sport </button>
+	  <button id ="culture_" onclick="culture_();"> culture </button>
+	  <button id ="work_" onclick="work_();"> work </button>
+	  
+    </body>
+	<script type="text/javascript" src="js/jsontocouch.js"></script>
+</html>
