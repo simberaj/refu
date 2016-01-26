@@ -391,7 +391,7 @@ function addModeOff() {
 
 function newDBEntry(coor, props) {
   var doc = {
-    "_id" : props.name.replace(/\s/g, "").slice(0,10) + parseInt(Math.random() * 1000000000000).toString(16), // first 10 chars of name followed by 12 random hexdigits
+    "_id" : props.name.replace(/\s/g, "").replace("'", "").slice(0,10) + parseInt(Math.random() * 1000000000000).toString(16), // first 10 chars of name followed by 12 random hexdigits
     "type" : "Feature",
     "geometry" : {"type" : "Point", "coordinates" : coor},
     "properties" : props
